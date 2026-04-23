@@ -9,12 +9,15 @@ use App\Http\Requests\Admin\UpdateArticleRequest;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
 
 class ArticleController extends Controller
 {
+    public function __construct(private readonly ImageOptimizer $imageOptimizer) {}
+
     public function index(): Response
     {
         $articles = Article::query()
@@ -42,8 +45,10 @@ class ArticleController extends Controller
         $data['user_id'] = $request->user()->id;
 
         if ($request->hasFile('featured_image')) {
-            $data['featured_image'] = $request->file('featured_image')
-                ->store('articles', 'public');
+            $data['featured_image'] = $this->imageOptimizer->store(
+                $request->file('featured_image'),
+                'articles',
+            );
         }
 
         if ($data['status'] === ArticleStatus::Published->value && empty($data['published_at'])) {
@@ -82,8 +87,10 @@ class ArticleController extends Controller
             if ($article->featured_image) {
                 Storage::disk('public')->delete($article->featured_image);
             }
-            $data['featured_image'] = $request->file('featured_image')
-                ->store('articles', 'public');
+            $data['featured_image'] = $this->imageOptimizer->store(
+                $request->file('featured_image'),
+                'articles',
+            );
         }
 
         if ($data['status'] === ArticleStatus::Published->value

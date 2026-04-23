@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Models\Project;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Response;
 
 class ProjectController extends Controller
 {
+    public function __construct(private readonly ImageOptimizer $imageOptimizer) {}
+
     public function index(): Response
     {
         $projects = Project::query()
@@ -34,7 +37,7 @@ class ProjectController extends Controller
         $data = $request->safe()->except(['image']);
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('projects', 'public');
+            $data['image'] = $this->imageOptimizer->store($request->file('image'), 'projects');
         }
 
         Project::create($data);
@@ -63,7 +66,7 @@ class ProjectController extends Controller
             if ($project->image) {
                 Storage::disk('public')->delete($project->image);
             }
-            $data['image'] = $request->file('image')->store('projects', 'public');
+            $data['image'] = $this->imageOptimizer->store($request->file('image'), 'projects');
         }
 
         $project->update($data);
