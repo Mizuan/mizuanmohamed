@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import {
+    Check,
     FileText,
     FolderKanban,
     Layers,
@@ -160,10 +161,14 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                                                     variant={
                                                         article.status ===
                                                         'published'
-                                                            ? 'default'
+                                                            ? 'success'
                                                             : 'secondary'
                                                     }
                                                 >
+                                                    {article.status ===
+                                                        'published' && (
+                                                        <Check />
+                                                    )}
                                                     {article.status}
                                                 </Badge>
                                             </TableCell>

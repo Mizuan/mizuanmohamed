@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ExternalLink, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Check, ExternalLink, Pencil, Plus, Trash2 } from 'lucide-react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -125,10 +125,13 @@ export default function ProjectsIndex({ projects }: Props) {
                                                 <Badge
                                                     variant={
                                                         project.is_published
-                                                            ? 'default'
+                                                            ? 'success'
                                                             : 'secondary'
                                                     }
                                                 >
+                                                    {project.is_published && (
+                                                        <Check />
+                                                    )}
                                                     {project.is_published
                                                         ? 'Published'
                                                         : 'Draft'}

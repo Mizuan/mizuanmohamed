@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Check, Pencil, Plus, Trash2 } from 'lucide-react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
 import { Badge } from '@/components/ui/badge';
@@ -98,10 +98,14 @@ export default function ArticlesIndex({ articles }: Props) {
                                                     variant={
                                                         article.status ===
                                                         'published'
-                                                            ? 'default'
+                                                            ? 'success'
                                                             : 'secondary'
                                                     }
                                                 >
+                                                    {article.status ===
+                                                        'published' && (
+                                                        <Check />
+                                                    )}
                                                     {article.status}
                                                 </Badge>
                                             </TableCell>
