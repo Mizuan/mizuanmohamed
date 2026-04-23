@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\ArticleStatus;
+use App\Http\Controllers\Concerns\FlashesToasts;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreArticleRequest;
 use App\Http\Requests\Admin\UpdateArticleRequest;
@@ -16,6 +17,8 @@ use Inertia\Response;
 
 class ArticleController extends Controller
 {
+    use FlashesToasts;
+
     public function __construct(private readonly ImageOptimizer $imageOptimizer) {}
 
     public function index(): Response
@@ -57,9 +60,9 @@ class ArticleController extends Controller
 
         $article = Article::create($data);
         $article->tags()->sync($request->validated('tag_ids') ?? []);
+        $this->toast('success', 'Article created.');
 
-        return to_route('admin.articles.index')
-            ->with('success', 'Article created.');
+        return to_route('admin.articles.index');
     }
 
     public function edit(Article $article): Response
@@ -102,9 +105,9 @@ class ArticleController extends Controller
 
         $article->update($data);
         $article->tags()->sync($request->validated('tag_ids') ?? []);
+        $this->toast('success', 'Article updated.');
 
-        return to_route('admin.articles.index')
-            ->with('success', 'Article updated.');
+        return to_route('admin.articles.index');
     }
 
     public function destroy(Article $article): RedirectResponse
@@ -114,8 +117,8 @@ class ArticleController extends Controller
         }
 
         $article->delete();
+        $this->toast('success', 'Article deleted.');
 
-        return to_route('admin.articles.index')
-            ->with('success', 'Article deleted.');
+        return to_route('admin.articles.index');
     }
 }

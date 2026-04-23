@@ -12,6 +12,13 @@ function Toaster({ ...props }: ToasterProps) {
             theme={appearance}
             className="toaster group"
             position="bottom-right"
+            toastOptions={{
+                classNames: {
+                    success: 'text-green-600! dark:text-green-400!',
+                    error: 'text-red-600! dark:text-red-400!',
+                    warning: 'text-amber-600! dark:text-amber-400!',
+                },
+            }}
             style={
                 {
                     '--normal-bg': 'var(--popover)',

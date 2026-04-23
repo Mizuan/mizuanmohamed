@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\FlashesToasts;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class ProjectController extends Controller
 {
+    use FlashesToasts;
+
     public function __construct(private readonly ImageOptimizer $imageOptimizer) {}
 
     public function index(): Response
@@ -41,9 +44,9 @@ class ProjectController extends Controller
         }
 
         Project::create($data);
+        $this->toast('success', 'Project created.');
 
-        return to_route('admin.projects.index')
-            ->with('success', 'Project created.');
+        return to_route('admin.projects.index');
     }
 
     public function edit(Project $project): Response
@@ -70,9 +73,9 @@ class ProjectController extends Controller
         }
 
         $project->update($data);
+        $this->toast('success', 'Project updated.');
 
-        return to_route('admin.projects.index')
-            ->with('success', 'Project updated.');
+        return to_route('admin.projects.index');
     }
 
     public function destroy(Project $project): RedirectResponse
@@ -82,8 +85,8 @@ class ProjectController extends Controller
         }
 
         $project->delete();
+        $this->toast('success', 'Project deleted.');
 
-        return to_route('admin.projects.index')
-            ->with('success', 'Project deleted.');
+        return to_route('admin.projects.index');
     }
 }

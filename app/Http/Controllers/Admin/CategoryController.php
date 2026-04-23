@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\FlashesToasts;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCategoryRequest;
 use App\Http\Requests\Admin\UpdateCategoryRequest;
@@ -11,6 +12,8 @@ use Inertia\Response;
 
 class CategoryController extends Controller
 {
+    use FlashesToasts;
+
     public function index(): Response
     {
         $categories = Category::query()
@@ -31,9 +34,9 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
         Category::create($request->validated());
+        $this->toast('success', 'Category created.');
 
-        return to_route('admin.categories.index')
-            ->with('success', 'Category created.');
+        return to_route('admin.categories.index');
     }
 
     public function edit(Category $category): Response
@@ -46,16 +49,16 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
         $category->update($request->validated());
+        $this->toast('success', 'Category updated.');
 
-        return to_route('admin.categories.index')
-            ->with('success', 'Category updated.');
+        return to_route('admin.categories.index');
     }
 
     public function destroy(Category $category): RedirectResponse
     {
         $category->delete();
+        $this->toast('success', 'Category deleted.');
 
-        return to_route('admin.categories.index')
-            ->with('success', 'Category deleted.');
+        return to_route('admin.categories.index');
     }
 }
