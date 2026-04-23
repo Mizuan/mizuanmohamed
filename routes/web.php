@@ -5,12 +5,13 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])
