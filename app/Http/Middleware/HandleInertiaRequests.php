@@ -42,6 +42,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'site' => [
+                'url' => config('app.url'),
+                'description' => 'Software developer based in Malé, Maldives. Notes, articles, and projects.',
+            ],
         ];
     }
 }
