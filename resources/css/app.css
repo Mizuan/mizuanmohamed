@@ -179,4 +179,64 @@
     .prose-like a {
         @apply text-primary underline underline-offset-4;
     }
+
+    /* highlight.js — GitHub-ish tokens, works in light and dark */
+    .hljs {
+        @apply block overflow-x-auto;
+    }
+    .hljs-comment,
+    .hljs-quote {
+        @apply text-muted-foreground italic;
+    }
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-literal,
+    .hljs-doctag,
+    .hljs-section,
+    .hljs-name,
+    .hljs-strong {
+        @apply text-blue-600 dark:text-blue-400;
+    }
+    .hljs-title,
+    .hljs-title.class_,
+    .hljs-title.function_,
+    .hljs-class .hljs-title,
+    .hljs-type,
+    .hljs-tag,
+    .hljs-built_in {
+        @apply text-red-600 dark:text-red-400;
+    }
+    .hljs-attr,
+    .hljs-attribute,
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-property,
+    .hljs-regexp,
+    .hljs-link {
+        @apply text-amber-600 dark:text-amber-400;
+    }
+    .hljs-string,
+    .hljs-symbol,
+    .hljs-bullet,
+    .hljs-meta-string,
+    .hljs-addition {
+        @apply text-emerald-700 dark:text-emerald-400;
+    }
+    .hljs-number,
+    .hljs-meta,
+    .hljs-selector-id,
+    .hljs-selector-class {
+        @apply text-violet-600 dark:text-violet-400;
+    }
+    .hljs-function,
+    .hljs-function .hljs-title,
+    .hljs-params {
+        @apply text-foreground;
+    }
+    .hljs-deletion {
+        @apply text-red-700 dark:text-red-300;
+    }
+    .hljs-emphasis {
+        @apply italic;
+    }
 }

@@ -17,9 +17,9 @@ class PagesSeeder extends Seeder
             [
                 'title' => 'About',
                 'content' => <<<'HTML'
-<p>Hey, I'm Mizuan. Software developer based in Malé, Maldives, and I've been at this for about seven years.</p>
-<p>Most of my work lives in the Laravel + React + TypeScript stack, which in practice means a lot of REST APIs talking to MySQL and more Laravel Forge deploys than I'd care to count. I'm a big fan of keeping things boring where it matters and experimenting where it doesn't.</p>
-<p>These days I lead a small development team at a government SOE here in the Maldives — internal systems, real users, real deadlines. It's the kind of work that teaches you what actually matters once software starts getting used. A lot of what I know about shipping came from there, not from blog posts.</p>
+<p>I'm a Software developer based in Malé, Maldives, and I've been at this for about seven years.</p>
+<p>Most of my work lives in the Laravel + React + TypeScript stack, which in practice means a lot of REST APIs talking to MySQL and more Laravel Forge deploys than I'd care to count.</p>
+<p>These days I lead a small development team at a government SOE here in the Maldives, internal systems, real users, real deadlines. It's the kind of work that teaches you what actually matters once software starts getting used. A lot of what I know about shipping came from there, not from blog posts.</p>
 <p>Outside the day job I still build things for fun. You'll find a few of them on the portfolio page. This site is one too, built with Laravel, Inertia, and React because I wanted to see what the stack feels like when nobody's reviewing my PRs.</p>
 <p>If you want to talk shop or have something you'd like to build together, the contact page has what you need.</p>
 HTML,

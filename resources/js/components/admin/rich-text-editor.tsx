@@ -1,10 +1,25 @@
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import bash from 'highlight.js/lib/languages/bash';
+import css from 'highlight.js/lib/languages/css';
+import go from 'highlight.js/lib/languages/go';
+import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
+import markdown from 'highlight.js/lib/languages/markdown';
+import php from 'highlight.js/lib/languages/php';
+import python from 'highlight.js/lib/languages/python';
+import sql from 'highlight.js/lib/languages/sql';
+import typescript from 'highlight.js/lib/languages/typescript';
+import xml from 'highlight.js/lib/languages/xml';
+import yaml from 'highlight.js/lib/languages/yaml';
+import { createLowlight } from 'lowlight';
 import {
     Bold,
     Code,
+    Code2,
     Heading2,
     Heading3,
     Italic,
@@ -17,9 +32,48 @@ import {
     Undo,
 } from 'lucide-react';
 import { useState } from 'react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';
+
+const lowlight = createLowlight({
+    bash,
+    css,
+    go,
+    html: xml,
+    javascript,
+    json,
+    markdown,
+    php,
+    python,
+    sql,
+    typescript,
+    xml,
+    yaml,
+});
+
+const LANGUAGES: { value: string; label: string }[] = [
+    { value: 'plaintext', label: 'Plain text' },
+    { value: 'bash', label: 'Bash' },
+    { value: 'css', label: 'CSS' },
+    { value: 'go', label: 'Go' },
+    { value: 'html', label: 'HTML' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'json', label: 'JSON' },
+    { value: 'markdown', label: 'Markdown' },
+    { value: 'php', label: 'PHP' },
+    { value: 'python', label: 'Python' },
+    { value: 'sql', label: 'SQL' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'yaml', label: 'YAML' },
+];
 
 type RichTextEditorProps = {
     name: string;
@@ -40,6 +94,14 @@ export function RichTextEditor({
         extensions: [
             StarterKit.configure({
                 heading: { levels: [2, 3] },
+                codeBlock: false,
+            }),
+            CodeBlockLowlight.configure({
+                lowlight,
+                defaultLanguage: 'plaintext',
+                HTMLAttributes: {
+                    class: 'hljs',
+                },
             }),
             Link.configure({
                 openOnClick: false,
@@ -115,6 +177,15 @@ function Toolbar({ editor }: { editor: Editor | null }) {
                 onPressedChange={() => editor.chain().focus().toggleCode().run()}
             >
                 <Code className="size-4" />
+            </ToolbarButton>
+            <ToolbarButton
+                label="Code block"
+                pressed={editor.isActive('codeBlock')}
+                onPressedChange={() =>
+                    editor.chain().focus().toggleCodeBlock().run()
+                }
+            >
+                <Code2 className="size-4" />
             </ToolbarButton>
 
             <Divider />
@@ -198,6 +269,47 @@ function Toolbar({ editor }: { editor: Editor | null }) {
             >
                 <LinkIcon className="size-4" />
             </ToolbarButton>
+
+            {editor.isActive('codeBlock') && (
+                <>
+                    <Divider />
+                    <Select
+                        value={
+                            (editor.getAttributes('codeBlock').language as
+                                | string
+                                | undefined) ?? 'plaintext'
+                        }
+                        onValueChange={(value) =>
+                            editor
+                                .chain()
+                                .focus()
+                                .updateAttributes('codeBlock', {
+                                    language:
+                                        value === 'plaintext' ? null : value,
+                                })
+                                .run()
+                        }
+                    >
+                        <SelectTrigger
+                            size="sm"
+                            className="h-8 min-w-32"
+                            aria-label="Code block language"
+                        >
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {LANGUAGES.map((lang) => (
+                                <SelectItem
+                                    key={lang.value}
+                                    value={lang.value}
+                                >
+                                    {lang.label}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </>
+            )}
 
             <div className="ml-auto flex items-center gap-0.5">
                 <ToolbarButton
