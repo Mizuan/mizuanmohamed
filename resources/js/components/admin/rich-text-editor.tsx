@@ -1,7 +1,8 @@
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
-import { EditorContent, useEditor, type Editor } from '@tiptap/react';
+import { EditorContent, useEditor  } from '@tiptap/react';
+import type {Editor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import bash from 'highlight.js/lib/languages/bash';
 import css from 'highlight.js/lib/languages/css';
@@ -249,7 +250,11 @@ function Toolbar({ editor }: { editor: Editor | null }) {
                         | string
                         | undefined;
                     const url = window.prompt('URL', previous ?? 'https://');
-                    if (url === null) return;
+
+                    if (url === null) {
+return;
+}
+
                     if (url === '') {
                         editor
                             .chain()
@@ -257,8 +262,10 @@ function Toolbar({ editor }: { editor: Editor | null }) {
                             .extendMarkRange('link')
                             .unsetLink()
                             .run();
+
                         return;
                     }
+
                     editor
                         .chain()
                         .focus()

@@ -1,6 +1,7 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
-import { useState, type ChangeEvent } from 'react';
+import { useState  } from 'react';
+import type {ChangeEvent} from 'react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
 import { TagInput } from '@/components/admin/tag-input';

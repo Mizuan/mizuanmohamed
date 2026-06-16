@@ -1,5 +1,6 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { useState, type ChangeEvent } from 'react';
+import { useState  } from 'react';
+import type {ChangeEvent} from 'react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { TagInput } from '@/components/admin/tag-input';
 import InputError from '@/components/input-error';

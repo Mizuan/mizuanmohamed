@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
-import { useState, type KeyboardEvent } from 'react';
+import { useState  } from 'react';
+import type {KeyboardEvent} from 'react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 
@@ -21,7 +22,11 @@ export function TagInput({
 
     const addItem = (value: string) => {
         const trimmed = value.trim();
-        if (!trimmed || items.includes(trimmed)) return;
+
+        if (!trimmed || items.includes(trimmed)) {
+return;
+}
+
         setItems([...items, trimmed]);
     };
 
@@ -34,8 +39,10 @@ export function TagInput({
             event.preventDefault();
             addItem(draft);
             setDraft('');
+
             return;
         }
+
         if (event.key === 'Backspace' && draft === '' && items.length > 0) {
             event.preventDefault();
             removeItem(items[items.length - 1]);

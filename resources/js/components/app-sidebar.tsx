@@ -19,12 +19,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { dashboard } from '@/routes';
 import { index as articlesIndex } from '@/routes/admin/articles';
 import { index as categoriesIndex } from '@/routes/admin/categories';
 import { index as pagesIndex } from '@/routes/admin/pages';
 import { index as projectsIndex } from '@/routes/admin/projects';
 import { index as tagsIndex } from '@/routes/admin/tags';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [

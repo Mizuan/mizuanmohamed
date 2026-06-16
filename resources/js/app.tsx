@@ -13,6 +13,10 @@ createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
+            // The home page is a full-bleed, immersive page with its own
+            // nav and footer, so it opts out of the shared site layout.
+            case name === 'site/home':
+                return null;
             case name.startsWith('site/'):
                 return SiteLayout;
             case name.startsWith('auth/'):

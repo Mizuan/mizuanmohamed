@@ -1,6 +1,7 @@
 import { Form, Head, Link, router } from '@inertiajs/react';
 import { Trash2 } from 'lucide-react';
-import { useState, type ChangeEvent } from 'react';
+import { useState  } from 'react';
+import type {ChangeEvent} from 'react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
 import { RichTextEditor } from '@/components/admin/rich-text-editor';
@@ -72,9 +73,13 @@ export default function ArticleEdit({
     };
 
     const toLocalDateTime = (iso: string | null) => {
-        if (!iso) return '';
+        if (!iso) {
+return '';
+}
+
         const date = new Date(iso);
         const pad = (n: number) => String(n).padStart(2, '0');
+
         return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
             date.getDate(),
         )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
