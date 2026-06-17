@@ -46,7 +46,7 @@ export default function ArticleShow({ article }: Props) {
                 </Link>
 
                 <header className="mt-6">
-                    <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                    <h1 className="font-serif text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] font-medium tracking-[-0.02em] text-balance">
                         {article.title}
                     </h1>
                     <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">

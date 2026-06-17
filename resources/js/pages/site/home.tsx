@@ -5,10 +5,10 @@ import { ArrowDown, ArrowRight, ArrowUpRight, Mail } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { HeroCanvas } from '@/components/site/hero-canvas';
+import { ProjectCard } from '@/components/site/project-card';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteNav } from '@/components/site/site-nav';
-import { cn } from '@/lib/utils';
 import { index as articlesIndex, show as articleShow } from '@/routes/site/articles';
 import { show as pageShow } from '@/routes/site/pages';
 import { index as projectsIndex } from '@/routes/site/projects';
@@ -39,7 +39,7 @@ type Props = {
     featuredProjects: FeaturedProject[];
 };
 
-const headline = ['Full-Stack', 'Software', 'Developer'];
+const headlineLines = [['Full-Stack', 'Software'], ['Developer']];
 
 export default function Home({ latestArticles, featuredProjects }: Props) {
     const root = useRef<HTMLDivElement | null>(null);
@@ -111,15 +111,22 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                 />
 
                 <div className="mx-auto flex min-h-svh max-w-6xl flex-col justify-center px-6 pt-28 pb-24 lg:px-8">
-                    <h1 className="max-w-5xl text-[clamp(2.75rem,9vw,7rem)] leading-[0.95] font-semibold tracking-[-0.03em]">
-                        {headline.map((word, i) => (
+                    <h1 className="max-w-5xl font-serif text-[clamp(2.125rem,7vw,6rem)] leading-[0.95] font-medium tracking-[-0.03em]">
+                        {headlineLines.map((line, li) => (
                             <span
-                                key={i}
-                                className="mr-[0.25em] inline-block overflow-hidden align-bottom"
+                                key={li}
+                                className="block whitespace-nowrap"
                             >
-                                <span className="hero-word inline-block">
-                                    {word}
-                                </span>
+                                {line.map((word, wi) => (
+                                    <span
+                                        key={wi}
+                                        className="mr-[0.25em] inline-block overflow-hidden align-bottom"
+                                    >
+                                        <span className="hero-word inline-block">
+                                            {word}
+                                        </span>
+                                    </span>
+                                ))}
                             </span>
                         ))}
                     </h1>
@@ -164,11 +171,11 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                 </p>
                 <p
                     data-reveal
-                    className="mt-8 max-w-4xl text-[clamp(1.5rem,4vw,2.75rem)] leading-[1.2] font-medium tracking-[-0.02em] text-balance"
+                    className="mt-8 max-w-4xl font-serif text-[clamp(1.5rem,4vw,2.75rem)] leading-[1.2] font-medium tracking-[-0.02em] text-balance"
                 >
                     I care about the whole arc — from the data model to the last
                     micro-interaction. Good software feels{' '}
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground italic">
                         obvious in hindsight
                     </span>
                     : quick, considered, and quietly reliable.
@@ -203,7 +210,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                         data-reveal
                         className="mb-12 flex flex-wrap items-end justify-between gap-4"
                     >
-                        <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold tracking-[-0.02em]">
+                        <h2 className="font-serif text-[clamp(2rem,5vw,3.5rem)] font-medium tracking-[-0.02em]">
                             Selected work
                         </h2>
                         <Link
@@ -235,7 +242,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                             data-reveal
                             className="mb-12 flex flex-wrap items-end justify-between gap-4"
                         >
-                            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold tracking-[-0.02em]">
+                            <h2 className="font-serif text-[clamp(2rem,5vw,3.5rem)] font-medium tracking-[-0.02em]">
                                 Latest writing
                             </h2>
                             <Link
@@ -295,7 +302,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                     </p>
                     <h2
                         data-reveal
-                        className="mx-auto mt-6 max-w-3xl text-[clamp(2.25rem,7vw,5rem)] leading-[0.98] font-semibold tracking-[-0.03em]"
+                        className="mx-auto mt-6 max-w-3xl font-serif text-[clamp(2.25rem,7vw,5rem)] leading-[0.98] font-medium tracking-[-0.03em]"
                     >
                         Have a project in mind?
                     </h2>
@@ -316,80 +323,6 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
             </section>
 
             <SiteFooter />
-        </div>
-    );
-}
-
-function ProjectCard({
-    project,
-    large,
-}: {
-    project: FeaturedProject;
-    large?: boolean;
-}) {
-    const content = (
-        <>
-            <div className="relative aspect-16/10 overflow-hidden bg-muted">
-                {project.image ? (
-                    <img
-                        src={project.image}
-                        alt={project.title}
-                        loading="lazy"
-                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                ) : (
-                    <div className="flex size-full items-center justify-center text-5xl font-semibold tracking-tight text-muted-foreground/30">
-                        {project.title.charAt(0)}
-                    </div>
-                )}
-            </div>
-            <div className="p-6">
-                <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-lg font-medium tracking-tight">
-                        {project.title}
-                    </h3>
-                    <ArrowUpRight className="size-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </div>
-                {project.description && (
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
-                        {project.description}
-                    </p>
-                )}
-                {project.technologies && project.technologies.length > 0 && (
-                    <div className="mt-4 flex flex-wrap gap-2">
-                        {project.technologies.slice(0, 4).map((tech) => (
-                            <span
-                                key={tech}
-                                className="rounded-full border px-2.5 py-1 text-xs text-muted-foreground"
-                            >
-                                {tech}
-                            </span>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </>
-    );
-
-    const className = cn(
-        'group block overflow-hidden rounded-2xl border bg-card transition-colors hover:border-foreground/30',
-        large && 'sm:col-span-2',
-    );
-
-    return (
-        <div data-reveal>
-            {project.link ? (
-                <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={className}
-                >
-                    {content}
-                </a>
-            ) : (
-                <div className={className}>{content}</div>
-            )}
         </div>
     );
 }

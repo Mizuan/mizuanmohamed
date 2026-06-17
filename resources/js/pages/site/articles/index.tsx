@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { PageHeader } from '@/components/site/page-header';
 import { SeoHead } from '@/components/site/seo-head';
 import { Button } from '@/components/ui/button';
 import { show as articleShow } from '@/routes/site/articles';
@@ -35,15 +36,11 @@ export default function ArticlesIndex({ articles }: Props) {
             />
 
             <section className="pb-16">
-                <header className="mb-10">
-                    <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                        Articles
-                    </h1>
-                    <p className="mt-2 text-muted-foreground">
-                        Things I've written about Laravel, React, and the
-                        rest of the web.
-                    </p>
-                </header>
+                <PageHeader
+                    eyebrow="Writing"
+                    title="Articles"
+                    description="Things I've written about Laravel, React, and the rest of the web."
+                />
 
                 {articles.data.length === 0 ? (
                     <p className="rounded-md border border-dashed p-12 text-center text-sm text-muted-foreground">

@@ -1,4 +1,5 @@
 import { ArticleContent } from '@/components/site/article-content';
+import { PageHeader } from '@/components/site/page-header';
 import { SeoHead } from '@/components/site/seo-head';
 
 type Page = {
@@ -23,11 +24,7 @@ export default function PageShow({ page }: Props) {
             />
 
             <article className="pb-16">
-                <header className="mb-8">
-                    <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                        {page.title}
-                    </h1>
-                </header>
+                <PageHeader title={page.title} />
 
                 {page.content && (
                     <ArticleContent
