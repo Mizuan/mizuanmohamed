@@ -111,7 +111,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                 />
 
                 <div className="mx-auto flex min-h-svh max-w-6xl flex-col justify-center px-6 pt-28 pb-24 lg:px-8">
-                    <h1 className="max-w-5xl font-serif text-[clamp(2.125rem,7vw,6rem)] leading-[0.95] font-medium tracking-[-0.03em]">
+                    <h1 className="max-w-5xl font-serif text-[clamp(2.375rem,7vw,6rem)] leading-[0.95] font-medium tracking-[-0.03em]">
                         {headlineLines.map((line, li) => (
                             <span
                                 key={li}
