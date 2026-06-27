@@ -132,7 +132,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                     </h1>
 
                     <p className="hero-fade mt-8 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                        I&apos;m Mizuan — a software developer with seven years
+                        I&apos;m Mizuan, a software developer with seven years
                         shipping web applications end to end. I lead a small team
                         at a government SOE and build thoughtful, fast products
                         with Laravel, React, and TypeScript.
@@ -173,7 +173,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                     data-reveal
                     className="mt-8 max-w-4xl font-serif text-[clamp(1.5rem,4vw,2.75rem)] leading-[1.2] font-medium tracking-[-0.02em] text-balance"
                 >
-                    I care about the whole arc — from the data model to the last
+                    I care about the whole arc, from the data model to the last
                     micro-interaction. Good software feels{' '}
                     <span className="text-muted-foreground italic">
                         obvious in hindsight
