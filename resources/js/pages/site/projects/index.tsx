@@ -1,11 +1,15 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
+import { ArrowUpRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { ProjectArtwork } from '@/components/site/project-artwork';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteNav } from '@/components/site/site-nav';
-import { SplitHeadline } from '@/components/site/split-headline';
 import { screenshotUrl } from '@/lib/preview';
 import { storageUrl } from '@/lib/storage';
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Project = {
     id: number;
@@ -29,10 +33,11 @@ const NO_SCREENSHOT = new Set([
     'recruitment-portal-of-judicial-service-commission',
 ]);
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
 /**
- * Full-bleed, grayscale project screenshot with a dark scrim so text reads
- * cleanly on top. Falls back to the generative artwork. Re-mounted per project
- * (via key) so the screenshot fades in and the error state resets.
+ * Full-bleed project screenshot with a black vignette so text reads on top.
+ * Priority: uploaded image → live screenshot → generative artwork.
  */
 function Backdrop({
     slug,
@@ -44,7 +49,6 @@ function Backdrop({
     link: string | null;
 }) {
     const [failed, setFailed] = useState(false);
-    // Priority: uploaded image (manual override) → live screenshot → artwork.
     const src = image
         ? storageUrl(image)
         : !failed && link
@@ -52,63 +56,95 @@ function Backdrop({
           : null;
 
     return (
-        <div className="absolute inset-0 animate-in fade-in duration-700">
+        <div className="absolute inset-0">
             {src ? (
                 <img
                     src={src}
                     alt=""
+                    loading="lazy"
                     onError={() => setFailed(true)}
-                    className="size-full object-cover object-top grayscale"
+                    className="size-full object-cover object-top"
                 />
             ) : (
                 <ProjectArtwork seed={slug} />
             )}
-            <div aria-hidden className="absolute inset-0 bg-background/45" />
             <div
                 aria-hidden
-                className="absolute inset-0 bg-linear-to-t from-background via-background/55 to-background/15"
+                className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-black/55"
             />
         </div>
     );
 }
 
 export default function ProjectsIndex({ projects }: Props) {
-    const [active, setActive] = useState(0);
+    const root = useRef<HTMLDivElement | null>(null);
     const total = projects.length;
 
-    const go = (dir: number) => {
-        if (total === 0) {
+    useEffect(() => {
+        const reduce = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        ).matches;
+
+        if (reduce) {
             return;
         }
 
-        setActive((current) => (current + dir + total) % total);
-    };
+        // Smooth (eased) scrolling, synced to ScrollTrigger so the stack
+        // animations stay glued to the scroll position.
+        const lenis = new Lenis({ lerp: 0.1 });
+        lenis.on('scroll', ScrollTrigger.update);
+        const onTick = (time: number) => lenis.raf(time * 1000);
+        gsap.ticker.add(onTick);
+        gsap.ticker.lagSmoothing(0);
 
-    useEffect(() => {
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === 'ArrowRight') {
-                go(1);
-            }
+        const ctx = gsap.context(() => {
+            const sections =
+                gsap.utils.toArray<HTMLElement>('.proj-section');
 
-            if (event.key === 'ArrowLeft') {
-                go(-1);
-            }
+            sections.forEach((section, i) => {
+                // The last section is never covered, so it doesn't recede.
+                if (i === sections.length - 1) {
+                    return;
+                }
+
+                const card = section.querySelector('.proj-card');
+                const dim = section.querySelector('.proj-dim');
+
+                // As the next section scrolls up over this one, scale it down
+                // and darken it so it appears to settle behind.
+                const trigger = {
+                    trigger: section,
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true,
+                };
+
+                gsap.to(card, {
+                    scale: 0.92,
+                    ease: 'none',
+                    scrollTrigger: trigger,
+                });
+                gsap.to(dim, {
+                    opacity: 0.6,
+                    ease: 'none',
+                    scrollTrigger: trigger,
+                });
+            });
+        }, root);
+
+        return () => {
+            ctx.revert();
+            gsap.ticker.remove(onTick);
+            gsap.ticker.lagSmoothing(500, 33);
+            lenis.destroy();
         };
-
-        window.addEventListener('keydown', onKey);
-
-        return () => window.removeEventListener('keydown', onKey);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [total]);
-
-    const project = projects[active];
-    const progress = total > 1 ? Math.round((active / (total - 1)) * 100) : 100;
-    const chips = project?.technologies?.length
-        ? project.technologies
-        : (project?.tags ?? []);
+    }, []);
 
     return (
-        <div className="dark relative flex h-svh flex-col overflow-hidden bg-background text-foreground antialiased">
+        <div
+            ref={root}
+            className="dark relative bg-background text-foreground antialiased"
+        >
             <SeoHead
                 title="Projects"
                 description="A selection of things I've built — for clients, for friends, and for myself."
@@ -117,105 +153,86 @@ export default function ProjectsIndex({ projects }: Props) {
             <SiteNav />
 
             {total === 0 ? (
-                <main className="flex flex-1 items-center justify-center px-6">
+                <div className="flex h-svh items-center justify-center px-6">
                     <p className="text-sm text-muted-foreground">
                         Nothing here yet.
                     </p>
-                </main>
-            ) : (
-                <main className="relative flex-1 overflow-hidden">
-                    <Backdrop
-                        key={project.slug}
-                        slug={project.slug}
-                        image={project.image}
-                        link={
-                            NO_SCREENSHOT.has(project.slug)
-                                ? null
-                                : project.link
-                        }
-                    />
-
-                    {/* Index number */}
-                    <span className="pointer-events-none absolute top-24 left-5 z-10 font-display text-[clamp(3rem,9vw,7rem)] leading-none font-semibold tabular-nums select-none lg:left-10">
-                        {String(active + 1).padStart(2, '0')}
-                    </span>
-
-                    {/* Year + progress */}
-                    <span className="absolute top-24 right-5 z-10 font-display text-sm font-medium text-muted-foreground tabular-nums lg:right-10">
-                        2025
-                    </span>
-                    <span className="absolute top-1/2 right-5 z-10 -translate-y-1/2 font-display text-sm font-medium text-muted-foreground tabular-nums lg:right-10">
-                        {progress}%
-                    </span>
-
-                    {/* Title + meta, lower-left */}
-                    <div className="absolute inset-x-0 bottom-24 z-10 px-6 lg:px-10">
-                        <div className="max-w-3xl">
-                            <SplitHeadline
-                                key={project.slug}
-                                text={project.title}
-                                className="font-display text-[clamp(1.375rem,3.2vw,2.5rem)] leading-none font-semibold tracking-[-0.02em] uppercase"
-                            />
-                            {chips.length > 0 && (
-                                <div className="mt-4 flex flex-wrap gap-2">
-                                    {chips.slice(0, 4).map((chip) => (
-                                        <span
-                                            key={chip}
-                                            className="rounded-full border px-3 py-1 font-display text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase"
-                                        >
-                                            {chip}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                            {project.description && (
-                                <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-                                    {project.description}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                </main>
-            )}
-
-            {/* Bottom pager + visit */}
-            {total > 0 && (
-                <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center gap-2 px-4">
-                    <div className="pointer-events-auto flex items-center gap-2 rounded-full border bg-background/80 py-2 pr-3 pl-3 backdrop-blur">
-                        <button
-                            type="button"
-                            onClick={() => go(-1)}
-                            aria-label="Previous project"
-                            className="rounded-full p-1.5 text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                            <ArrowLeft className="size-4" />
-                        </button>
-                        <span className="max-w-56 truncate text-center font-display text-xs font-medium tracking-[0.12em] text-foreground uppercase">
-                            {String(active + 1).padStart(2, '0')} /{' '}
-                            {String(total).padStart(2, '0')} — {project?.title}
-                        </span>
-                        <button
-                            type="button"
-                            onClick={() => go(1)}
-                            aria-label="Next project"
-                            className="rounded-full p-1.5 text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                            <ArrowRight className="size-4" />
-                        </button>
-                    </div>
-
-                    {project?.link && (
-                        <a
-                            href={project.link}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="pointer-events-auto inline-flex items-center gap-1.5 rounded-full border bg-background/80 px-4 py-2 font-display text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase backdrop-blur transition-colors hover:text-foreground"
-                        >
-                            Visit
-                            <ArrowUpRight className="size-3.5" />
-                        </a>
-                    )}
                 </div>
+            ) : (
+                projects.map((project, i) => {
+                    const chips = project.technologies?.length
+                        ? project.technologies
+                        : (project.tags ?? []);
+
+                    return (
+                        <section
+                            key={project.id}
+                            className="proj-section sticky top-0 h-svh overflow-hidden bg-black"
+                        >
+                            <div className="proj-card relative size-full origin-center will-change-transform">
+                                <Backdrop
+                                    slug={project.slug}
+                                    image={project.image}
+                                    link={
+                                        NO_SCREENSHOT.has(project.slug)
+                                            ? null
+                                            : project.link
+                                    }
+                                />
+
+                                {/* Index number */}
+                                <span className="pointer-events-none absolute top-24 left-5 font-display text-[clamp(3rem,9vw,7rem)] leading-none font-semibold tabular-nums select-none lg:left-10">
+                                    {pad(i + 1)}
+                                </span>
+
+                                {/* Position */}
+                                <span className="absolute top-24 right-5 font-display text-sm font-medium text-muted-foreground tabular-nums lg:right-10">
+                                    {pad(i + 1)} / {pad(total)}
+                                </span>
+
+                                {/* Title + meta */}
+                                <div className="absolute inset-x-0 bottom-16 px-6 lg:px-10">
+                                    <div className="max-w-3xl">
+                                        <h2 className="font-display text-[clamp(1.375rem,3.2vw,2.5rem)] leading-none font-semibold tracking-[-0.02em] uppercase">
+                                            {project.title}
+                                        </h2>
+                                        {chips.length > 0 && (
+                                            <div className="mt-4 flex flex-wrap gap-2">
+                                                {chips.slice(0, 4).map((chip) => (
+                                                    <span
+                                                        key={chip}
+                                                        className="rounded-full border px-3 py-1 font-display text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase"
+                                                    >
+                                                        {chip}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {project.description && (
+                                            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+                                                {project.description}
+                                            </p>
+                                        )}
+                                        {project.link && (
+                                            <a
+                                                href={project.link}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="mt-5 inline-flex items-center gap-1.5 rounded-full border bg-background/60 px-4 py-2 font-display text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase backdrop-blur transition-colors hover:text-foreground"
+                                            >
+                                                Visit
+                                                <ArrowUpRight className="size-3.5" />
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Darkens as the next project covers this one */}
+                                <div className="proj-dim pointer-events-none absolute inset-0 bg-black opacity-0" />
+                            </div>
+                        </section>
+                    );
+                })
             )}
         </div>
     );
