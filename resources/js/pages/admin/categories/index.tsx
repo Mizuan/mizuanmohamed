@@ -1,8 +1,15 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Form, Head, router } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { FormDialog } from '@/components/admin/form-dialog';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -11,12 +18,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 import { dashboard } from '@/routes';
 import {
-    create,
     destroy,
-    edit,
     index as categoriesIndex,
+    store,
+    update,
 } from '@/routes/admin/categories';
 
 type Category = {
@@ -41,7 +49,12 @@ type Props = {
     categories: Paginated<Category>;
 };
 
+// `undefined` = dialog closed · `null` = creating · Category = editing
+type Editing = Category | null | undefined;
+
 export default function CategoriesIndex({ categories }: Props) {
+    const [editing, setEditing] = useState<Editing>(undefined);
+
     return (
         <>
             <Head title="Categories" />
@@ -49,16 +62,14 @@ export default function CategoriesIndex({ categories }: Props) {
                 title="Categories"
                 description="Organise articles by category."
                 actions={
-                    <Button asChild>
-                        <Link href={create()}>
-                            <Plus />
-                            New category
-                        </Link>
+                    <Button onClick={() => setEditing(null)}>
+                        <Plus />
+                        New category
                     </Button>
                 }
             >
                 {categories.data.length === 0 ? (
-                    <EmptyState />
+                    <EmptyState onNew={() => setEditing(null)} />
                 ) : (
                     <>
                         <div className="rounded-lg border bg-card">
@@ -79,12 +90,15 @@ export default function CategoriesIndex({ categories }: Props) {
                                     {categories.data.map((category) => (
                                         <TableRow key={category.id}>
                                             <TableCell className="font-medium">
-                                                <Link
-                                                    href={edit(category.slug)}
-                                                    className="hover:underline"
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setEditing(category)
+                                                    }
+                                                    className="text-left hover:underline"
                                                 >
                                                     {category.name}
-                                                </Link>
+                                                </button>
                                                 {category.description && (
                                                     <p className="mt-0.5 max-w-md truncate text-xs text-muted-foreground">
                                                         {category.description}
@@ -102,18 +116,14 @@ export default function CategoriesIndex({ categories }: Props) {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        asChild
+                                                        onClick={() =>
+                                                            setEditing(category)
+                                                        }
                                                     >
-                                                        <Link
-                                                            href={edit(
-                                                                category.slug,
-                                                            )}
-                                                        >
-                                                            <Pencil />
-                                                            <span className="sr-only">
-                                                                Edit
-                                                            </span>
-                                                        </Link>
+                                                        <Pencil />
+                                                        <span className="sr-only">
+                                                            Edit
+                                                        </span>
                                                     </Button>
                                                     <ConfirmDialog
                                                         title="Delete category?"
@@ -155,21 +165,113 @@ export default function CategoriesIndex({ categories }: Props) {
                     </>
                 )}
             </AdminPage>
+
+            <CategoryFormDialog
+                category={editing}
+                onClose={() => setEditing(undefined)}
+            />
         </>
     );
 }
 
-function EmptyState() {
+function CategoryFormDialog({
+    category,
+    onClose,
+}: {
+    category: Editing;
+    onClose: () => void;
+}) {
+    const isEdit = !!category;
+
+    return (
+        <FormDialog
+            open={category !== undefined}
+            onOpenChange={(open) => {
+                if (!open) {
+                    onClose();
+                }
+            }}
+            title={isEdit ? 'Edit category' : 'New category'}
+            description="Categories help group related articles."
+        >
+            <Form
+                key={category?.id ?? 'new'}
+                {...(isEdit ? update.form(category.slug) : store.form())}
+                resetOnSuccess
+                onSuccess={onClose}
+                options={{ preserveScroll: true }}
+                className="space-y-5"
+            >
+                {({ processing, errors }) => (
+                    <>
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input
+                                id="name"
+                                name="name"
+                                required
+                                autoFocus
+                                defaultValue={category?.name ?? ''}
+                                placeholder="e.g. Engineering"
+                            />
+                            <InputError message={errors.name} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="slug">
+                                Slug{' '}
+                                <span className="text-xs text-muted-foreground">
+                                    (optional · auto-generated)
+                                </span>
+                            </Label>
+                            <Input
+                                id="slug"
+                                name="slug"
+                                defaultValue={category?.slug ?? ''}
+                                placeholder="engineering"
+                            />
+                            <InputError message={errors.slug} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Description</Label>
+                            <Textarea
+                                id="description"
+                                name="description"
+                                rows={3}
+                                defaultValue={category?.description ?? ''}
+                                placeholder="What belongs in this category?"
+                            />
+                            <InputError message={errors.description} />
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={onClose}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={processing}>
+                                {processing && <Spinner />}
+                                {isEdit ? 'Save changes' : 'Create category'}
+                            </Button>
+                        </DialogFooter>
+                    </>
+                )}
+            </Form>
+        </FormDialog>
+    );
+}
+
+function EmptyState({ onNew }: { onNew: () => void }) {
     return (
         <div className="rounded-lg border border-dashed bg-card p-12 text-center">
-            <p className="text-sm text-muted-foreground">
-                No categories yet.
-            </p>
-            <Button asChild className="mt-4">
-                <Link href={create()}>
-                    <Plus />
-                    Create your first category
-                </Link>
+            <p className="text-sm text-muted-foreground">No categories yet.</p>
+            <Button onClick={onNew} className="mt-4">
+                <Plus />
+                Create your first category
             </Button>
         </div>
     );
@@ -194,9 +296,7 @@ function Pagination({ paginated }: { paginated: Paginated<Category> }) {
                     disabled={!paginated.prev_page_url}
                 >
                     {paginated.prev_page_url ? (
-                        <Link href={paginated.prev_page_url} preserveScroll>
-                            Previous
-                        </Link>
+                        <a href={paginated.prev_page_url}>Previous</a>
                     ) : (
                         <span>Previous</span>
                     )}
@@ -208,9 +308,7 @@ function Pagination({ paginated }: { paginated: Paginated<Category> }) {
                     disabled={!paginated.next_page_url}
                 >
                     {paginated.next_page_url ? (
-                        <Link href={paginated.next_page_url} preserveScroll>
-                            Next
-                        </Link>
+                        <a href={paginated.next_page_url}>Next</a>
                     ) : (
                         <span>Next</span>
                     )}

@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
 import { RichTextEditor } from '@/components/admin/rich-text-editor';
+import {
+    SectionsRepeater
+    
+} from '@/components/admin/sections-repeater';
+import type {Section} from '@/components/admin/sections-repeater';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -23,6 +28,7 @@ type Page = {
     title: string;
     slug: string;
     content: string | null;
+    sections: Section[] | null;
     meta_description: string | null;
     is_published: boolean;
 };
@@ -95,6 +101,24 @@ export default function PageEdit({ page }: Props) {
                                     />
                                     <InputError message={errors.content} />
                                 </div>
+
+                                {page.slug === 'about' && (
+                                    <div className="space-y-2">
+                                        <Label>About sections</Label>
+                                        <p className="text-xs text-muted-foreground">
+                                            The intro, experience, approach and
+                                            toolkit panels shown on the public
+                                            About page.
+                                        </p>
+                                        <SectionsRepeater
+                                            name="sections"
+                                            defaultValue={page.sections ?? []}
+                                        />
+                                        <InputError
+                                            message={errors.sections}
+                                        />
+                                    </div>
+                                )}
 
                                 <div className="space-y-2">
                                     <Label htmlFor="meta_description">

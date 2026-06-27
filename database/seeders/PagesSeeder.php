@@ -23,6 +23,32 @@ class PagesSeeder extends Seeder
 <p>Outside the day job I still build things for fun. You'll find a few of them on the portfolio page. This site is one too, built with Laravel, Inertia, and React because I wanted to see what the stack feels like when nobody's reviewing my PRs.</p>
 <p>If you want to talk shop or have something you'd like to build together, the contact page has what you need.</p>
 HTML,
+                'sections' => [
+                    [
+                        'label' => 'Intro',
+                        'title' => 'About',
+                        'body' => "I'm Mizuan, a full-stack developer based in Malé, Maldives. For over seven years I've built fast, considered web applications end to end, from the data model to the last micro-interaction.\n\nI care about the whole arc of a product, and about software that feels quick, considered, and quietly reliable.",
+                        'tags' => [],
+                    ],
+                    [
+                        'label' => 'Experience',
+                        'title' => 'Experience',
+                        'body' => "I currently lead a small development team at a government SOE, shipping products with Laravel, React, and TypeScript.\n\nMy work spans the full lifecycle: data modelling and architecture, backend APIs, polished frontends, and the infrastructure that holds it all together.",
+                        'tags' => [],
+                    ],
+                    [
+                        'label' => 'Approach',
+                        'title' => 'Approach',
+                        'body' => "Good software feels obvious in hindsight. I sweat the details, the motion, the empty states, the edge cases, because those are the things people actually feel.\n\nI like building from the raw structure outward: a solid core, then a considered layer of craft on top.",
+                        'tags' => [],
+                    ],
+                    [
+                        'label' => 'Toolkit',
+                        'title' => 'Toolkit',
+                        'body' => '',
+                        'tags' => ['Laravel', 'PHP', 'React', 'TypeScript', 'Inertia.js', 'Tailwind CSS', 'PostgreSQL', 'MySQL', 'Redis', 'Node.js', 'AWS', 'Git'],
+                    ],
+                ],
                 'meta_description' => 'Mizuan Mohamed — fullstack developer from Malé, Maldives. Seven years with Laravel, React, and TypeScript, leading an engineering team.',
                 'is_published' => true,
             ],

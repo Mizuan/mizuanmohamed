@@ -26,24 +26,12 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return inertia('admin/categories/create');
-    }
-
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
         Category::create($request->validated());
         $this->toast('success', 'Category created.');
 
         return to_route('admin.categories.index');
-    }
-
-    public function edit(Category $category): Response
-    {
-        return inertia('admin/categories/edit', [
-            'category' => $category,
-        ]);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse

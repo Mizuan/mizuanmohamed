@@ -15,6 +15,7 @@ class PageController extends Controller
         if ($page->slug === 'about') {
             return inertia('site/about', [
                 'metaDescription' => $page->meta_description,
+                'sections' => $page->sections,
             ]);
         }
 

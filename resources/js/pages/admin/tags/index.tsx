@@ -1,8 +1,15 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Form, Head, router } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { AdminPage } from '@/components/admin/admin-page';
 import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { FormDialog } from '@/components/admin/form-dialog';
+import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
+import { DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
 import {
     Table,
     TableBody,
@@ -12,12 +19,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { dashboard } from '@/routes';
-import {
-    create,
-    destroy,
-    edit,
-    index as tagsIndex,
-} from '@/routes/admin/tags';
+import { destroy, index as tagsIndex, store, update } from '@/routes/admin/tags';
 
 type Tag = {
     id: number;
@@ -39,7 +41,12 @@ type Props = {
     tags: Paginated<Tag>;
 };
 
+// `undefined` = dialog closed · `null` = creating · Tag = editing
+type Editing = Tag | null | undefined;
+
 export default function TagsIndex({ tags }: Props) {
+    const [editing, setEditing] = useState<Editing>(undefined);
+
     return (
         <>
             <Head title="Tags" />
@@ -47,16 +54,14 @@ export default function TagsIndex({ tags }: Props) {
                 title="Tags"
                 description="Label articles with reusable tags."
                 actions={
-                    <Button asChild>
-                        <Link href={create()}>
-                            <Plus />
-                            New tag
-                        </Link>
+                    <Button onClick={() => setEditing(null)}>
+                        <Plus />
+                        New tag
                     </Button>
                 }
             >
                 {tags.data.length === 0 ? (
-                    <EmptyState />
+                    <EmptyState onNew={() => setEditing(null)} />
                 ) : (
                     <>
                         <div className="rounded-lg border bg-card">
@@ -77,12 +82,15 @@ export default function TagsIndex({ tags }: Props) {
                                     {tags.data.map((tag) => (
                                         <TableRow key={tag.id}>
                                             <TableCell className="font-medium">
-                                                <Link
-                                                    href={edit(tag.slug)}
-                                                    className="hover:underline"
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setEditing(tag)
+                                                    }
+                                                    className="text-left hover:underline"
                                                 >
                                                     {tag.name}
-                                                </Link>
+                                                </button>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {tag.slug}
@@ -95,16 +103,14 @@ export default function TagsIndex({ tags }: Props) {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        asChild
+                                                        onClick={() =>
+                                                            setEditing(tag)
+                                                        }
                                                     >
-                                                        <Link
-                                                            href={edit(tag.slug)}
-                                                        >
-                                                            <Pencil />
-                                                            <span className="sr-only">
-                                                                Edit
-                                                            </span>
-                                                        </Link>
+                                                        <Pencil />
+                                                        <span className="sr-only">
+                                                            Edit
+                                                        </span>
                                                     </Button>
                                                     <ConfirmDialog
                                                         title="Delete tag?"
@@ -112,9 +118,8 @@ export default function TagsIndex({ tags }: Props) {
                                                         confirmLabel="Delete"
                                                         onConfirm={() =>
                                                             router.delete(
-                                                                destroy(
-                                                                    tag.slug,
-                                                                ).url,
+                                                                destroy(tag.slug)
+                                                                    .url,
                                                                 {
                                                                     preserveScroll:
                                                                         true,
@@ -146,19 +151,92 @@ export default function TagsIndex({ tags }: Props) {
                     </>
                 )}
             </AdminPage>
+
+            <TagFormDialog tag={editing} onClose={() => setEditing(undefined)} />
         </>
     );
 }
 
-function EmptyState() {
+function TagFormDialog({ tag, onClose }: { tag: Editing; onClose: () => void }) {
+    const isEdit = !!tag;
+
+    return (
+        <FormDialog
+            open={tag !== undefined}
+            onOpenChange={(open) => {
+                if (!open) {
+                    onClose();
+                }
+            }}
+            title={isEdit ? 'Edit tag' : 'New tag'}
+            description="Tags are attached to articles for filtering."
+        >
+            <Form
+                key={tag?.id ?? 'new'}
+                {...(isEdit ? update.form(tag.slug) : store.form())}
+                resetOnSuccess
+                onSuccess={onClose}
+                options={{ preserveScroll: true }}
+                className="space-y-5"
+            >
+                {({ processing, errors }) => (
+                    <>
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input
+                                id="name"
+                                name="name"
+                                required
+                                autoFocus
+                                defaultValue={tag?.name ?? ''}
+                                placeholder="e.g. Laravel"
+                            />
+                            <InputError message={errors.name} />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="slug">
+                                Slug{' '}
+                                <span className="text-xs text-muted-foreground">
+                                    (optional · auto-generated)
+                                </span>
+                            </Label>
+                            <Input
+                                id="slug"
+                                name="slug"
+                                defaultValue={tag?.slug ?? ''}
+                                placeholder="laravel"
+                            />
+                            <InputError message={errors.slug} />
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={onClose}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={processing}>
+                                {processing && <Spinner />}
+                                {isEdit ? 'Save changes' : 'Create tag'}
+                            </Button>
+                        </DialogFooter>
+                    </>
+                )}
+            </Form>
+        </FormDialog>
+    );
+}
+
+function EmptyState({ onNew }: { onNew: () => void }) {
     return (
         <div className="rounded-lg border border-dashed bg-card p-12 text-center">
             <p className="text-sm text-muted-foreground">No tags yet.</p>
-            <Button asChild className="mt-4">
-                <Link href={create()}>
-                    <Plus />
-                    Create your first tag
-                </Link>
+            <Button onClick={onNew} className="mt-4">
+                <Plus />
+                Create your first tag
             </Button>
         </div>
     );
@@ -183,9 +261,7 @@ function Pagination({ paginated }: { paginated: Paginated<Tag> }) {
                     disabled={!paginated.prev_page_url}
                 >
                     {paginated.prev_page_url ? (
-                        <Link href={paginated.prev_page_url} preserveScroll>
-                            Previous
-                        </Link>
+                        <a href={paginated.prev_page_url}>Previous</a>
                     ) : (
                         <span>Previous</span>
                     )}
@@ -197,9 +273,7 @@ function Pagination({ paginated }: { paginated: Paginated<Tag> }) {
                     disabled={!paginated.next_page_url}
                 >
                     {paginated.next_page_url ? (
-                        <Link href={paginated.next_page_url} preserveScroll>
-                            Next
-                        </Link>
+                        <a href={paginated.next_page_url}>Next</a>
                     ) : (
                         <span>Next</span>
                     )}

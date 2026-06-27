@@ -26,24 +26,12 @@ class TagController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return inertia('admin/tags/create');
-    }
-
     public function store(StoreTagRequest $request): RedirectResponse
     {
         Tag::create($request->validated());
         $this->toast('success', 'Tag created.');
 
         return to_route('admin.tags.index');
-    }
-
-    public function edit(Tag $tag): Response
-    {
-        return inertia('admin/tags/edit', [
-            'tag' => $tag,
-        ]);
     }
 
     public function update(UpdateTagRequest $request, Tag $tag): RedirectResponse

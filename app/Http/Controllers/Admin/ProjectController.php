@@ -30,11 +30,6 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function create(): Response
-    {
-        return inertia('admin/projects/create');
-    }
-
     public function store(StoreProjectRequest $request): RedirectResponse
     {
         $data = $request->safe()->except(['image']);
@@ -47,13 +42,6 @@ class ProjectController extends Controller
         $this->toast('success', 'Project created.');
 
         return to_route('admin.projects.index');
-    }
-
-    public function edit(Project $project): Response
-    {
-        return inertia('admin/projects/edit', [
-            'project' => $project,
-        ]);
     }
 
     public function update(UpdateProjectRequest $request, Project $project): RedirectResponse

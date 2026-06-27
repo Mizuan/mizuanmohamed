@@ -9,39 +9,35 @@ import { SplitHeadline } from '@/components/site/split-headline';
 type Section = {
     label: string;
     title: string;
-    body?: string[];
-    tools?: string[];
+    body: string;
+    tags: string[];
 };
 
-const sections: Section[] = [
+// Used when the about page has no sections configured in the admin yet.
+const DEFAULT_SECTIONS: Section[] = [
     {
         label: 'Intro',
         title: 'About',
-        body: [
-            "I'm Mizuan, a full-stack developer based in Malé, Maldives. For over seven years I've built fast, considered web applications end to end, from the data model to the last micro-interaction.",
-            'I care about the whole arc of a product, and about software that feels quick, considered, and quietly reliable.',
-        ],
+        body: "I'm Mizuan, a full-stack developer based in Malé, Maldives. For over seven years I've built fast, considered web applications end to end, from the data model to the last micro-interaction.\n\nI care about the whole arc of a product, and about software that feels quick, considered, and quietly reliable.",
+        tags: [],
     },
     {
         label: 'Experience',
         title: 'Experience',
-        body: [
-            'I currently lead a small development team at a government SOE, shipping products with Laravel, React, and TypeScript.',
-            'My work spans the full lifecycle: data modelling and architecture, backend APIs, polished frontends, and the infrastructure that holds it all together.',
-        ],
+        body: 'I currently lead a small development team at a government SOE, shipping products with Laravel, React, and TypeScript.\n\nMy work spans the full lifecycle: data modelling and architecture, backend APIs, polished frontends, and the infrastructure that holds it all together.',
+        tags: [],
     },
     {
         label: 'Approach',
         title: 'Approach',
-        body: [
-            'Good software feels obvious in hindsight. I sweat the details, the motion, the empty states, the edge cases, because those are the things people actually feel.',
-            'I like building from the raw structure outward: a solid core, then a considered layer of craft on top.',
-        ],
+        body: 'Good software feels obvious in hindsight. I sweat the details, the motion, the empty states, the edge cases, because those are the things people actually feel.\n\nI like building from the raw structure outward: a solid core, then a considered layer of craft on top.',
+        tags: [],
     },
     {
         label: 'Toolkit',
         title: 'Toolkit',
-        tools: [
+        body: '',
+        tags: [
             'Laravel',
             'PHP',
             'React',
@@ -60,11 +56,15 @@ const sections: Section[] = [
 
 export default function About({
     metaDescription,
+    sections: configured,
 }: {
     metaDescription?: string | null;
+    sections?: Section[] | null;
 }) {
-    const [active, setActive] = useState(0);
+    const sections =
+        configured && configured.length > 0 ? configured : DEFAULT_SECTIONS;
     const total = sections.length;
+    const [active, setActive] = useState(0);
 
     const go = (dir: number) =>
         setActive((current) => (current + dir + total) % total);
@@ -149,20 +149,23 @@ export default function About({
 
                         {section.body && (
                             <div className="mt-6 max-w-md space-y-4 text-base leading-relaxed text-muted-foreground">
-                                {section.body.map((paragraph) => (
-                                    <p key={paragraph}>{paragraph}</p>
-                                ))}
+                                {section.body
+                                    .split(/\n\n+/)
+                                    .filter(Boolean)
+                                    .map((paragraph, i) => (
+                                        <p key={i}>{paragraph}</p>
+                                    ))}
                             </div>
                         )}
 
-                        {section.tools && (
+                        {section.tags.length > 0 && (
                             <div className="mt-6 flex max-w-lg flex-wrap gap-2">
-                                {section.tools.map((tool) => (
+                                {section.tags.map((tag) => (
                                     <span
-                                        key={tool}
+                                        key={tag}
                                         className="rounded-full border px-3 py-1.5 font-display text-xs font-medium tracking-wide"
                                     >
-                                        {tool}
+                                        {tag}
                                     </span>
                                 ))}
                             </div>

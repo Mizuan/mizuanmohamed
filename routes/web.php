@@ -33,11 +33,16 @@ Route::middleware(['auth', 'verified', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::resource('categories', CategoryController::class)->except('show');
-        Route::resource('tags', TagController::class)->except('show');
+        // Categories, tags and projects are managed via dialog modals on the
+        // index page, so they don't need create/edit screens.
+        Route::resource('categories', CategoryController::class)
+            ->except(['show', 'create', 'edit']);
+        Route::resource('tags', TagController::class)
+            ->except(['show', 'create', 'edit']);
+        Route::resource('projects', ProjectController::class)
+            ->except(['show', 'create', 'edit']);
         Route::resource('articles', ArticleController::class)->except('show');
         Route::resource('pages', PageController::class)->except('show');
-        Route::resource('projects', ProjectController::class)->except('show');
     });
 
 require __DIR__.'/settings.php';

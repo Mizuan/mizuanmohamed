@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
     'title',
     'slug',
     'content',
+    'sections',
     'meta_description',
     'is_published',
 ])]
@@ -23,6 +24,7 @@ class Page extends Model
     protected function casts(): array
     {
         return [
+            'sections' => 'array',
             'is_published' => 'boolean',
         ];
     }

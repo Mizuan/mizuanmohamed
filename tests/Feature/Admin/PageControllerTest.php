@@ -42,6 +42,45 @@ it('updates a page', function (): void {
     expect($page->is_published)->toBeFalse();
 });
 
+it('persists about sections on update', function (): void {
+    $page = Page::factory()->create(['slug' => 'about']);
+
+    $this->actingAs($this->admin)
+        ->put(route('admin.pages.update', $page), [
+            'title' => 'About',
+            'slug' => 'about',
+            'content' => '<p>x</p>',
+            'is_published' => true,
+            'sections' => [
+                [
+                    'label' => 'Intro',
+                    'title' => 'About',
+                    'body' => "First.\n\nSecond.",
+                    'tags' => ['Laravel', 'React'],
+                ],
+            ],
+        ])
+        ->assertRedirect(route('admin.pages.index'));
+
+    $page->refresh();
+    expect($page->sections)->toHaveCount(1);
+    expect($page->sections[0]['title'])->toBe('About');
+    expect($page->sections[0]['tags'])->toBe(['Laravel', 'React']);
+});
+
+it('requires a title for each about section', function (): void {
+    $page = Page::factory()->create(['slug' => 'about']);
+
+    $this->actingAs($this->admin)
+        ->put(route('admin.pages.update', $page), [
+            'title' => 'About',
+            'slug' => 'about',
+            'is_published' => true,
+            'sections' => [['label' => 'Intro', 'body' => 'x', 'tags' => []]],
+        ])
+        ->assertSessionHasErrors('sections.0.title');
+});
+
 it('deletes a page', function (): void {
     $page = Page::factory()->create();
 
