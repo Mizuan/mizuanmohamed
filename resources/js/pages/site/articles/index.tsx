@@ -9,6 +9,7 @@ type Article = {
     title: string;
     slug: string;
     excerpt: string | null;
+    reading_time: number;
     published_at: string | null;
     category: { id: number; name: string; slug: string } | null;
     tags: { id: number; name: string; slug: string }[];
@@ -87,7 +88,23 @@ export default function ArticlesIndex({ articles }: Props) {
                                                 </span>
                                             </>
                                         )}
+                                        <span>·</span>
+                                        <span>
+                                            {article.reading_time} min read
+                                        </span>
                                     </div>
+                                    {article.tags.length > 0 && (
+                                        <div className="mt-3 flex flex-wrap gap-1.5">
+                                            {article.tags.map((tag) => (
+                                                <span
+                                                    key={tag.id}
+                                                    className="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+                                                >
+                                                    {tag.name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
                                 </Link>
                             </li>
                         ))}

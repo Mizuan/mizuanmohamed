@@ -139,47 +139,88 @@
         @apply border-border;
     }
 
+    html {
+        scroll-behavior: smooth;
+    }
+
     body {
         @apply bg-background text-foreground;
+    }
+
+    ::selection {
+        @apply bg-foreground text-background;
+    }
+
+    a:focus-visible {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
     }
 }
 
 @layer components {
     .prose-like {
-        @apply text-sm leading-relaxed;
+        @apply max-w-[68ch] text-base leading-7;
     }
     .prose-like p {
-        @apply my-2;
+        @apply my-4;
     }
     .prose-like h2 {
-        @apply mt-6 mb-2 text-xl font-semibold tracking-tight;
+        @apply mt-10 mb-3 text-2xl font-semibold tracking-tight;
     }
     .prose-like h3 {
-        @apply mt-5 mb-2 text-lg font-semibold tracking-tight;
+        @apply mt-8 mb-2 text-xl font-semibold tracking-tight;
     }
     .prose-like ul {
-        @apply my-2 list-disc pl-6;
+        @apply my-4 list-disc pl-6;
     }
     .prose-like ol {
-        @apply my-2 list-decimal pl-6;
+        @apply my-4 list-decimal pl-6;
     }
     .prose-like li {
-        @apply my-1;
+        @apply my-1.5;
     }
     .prose-like blockquote {
-        @apply my-3 border-l-2 border-border pl-4 text-muted-foreground italic;
+        @apply my-6 border-l-2 border-border pl-4 text-muted-foreground italic;
     }
-    .prose-like code {
-        @apply rounded bg-muted px-1.5 py-0.5 text-xs font-mono;
+    .prose-like :not(pre) > code {
+        @apply rounded bg-muted px-1.5 py-0.5 text-[0.85em] font-mono;
     }
     .prose-like pre {
-        @apply my-3 overflow-x-auto rounded-md bg-muted p-3 text-xs;
+        @apply my-6 overflow-x-auto rounded-md bg-muted p-4 text-sm;
     }
     .prose-like pre code {
         @apply bg-transparent p-0;
     }
     .prose-like a {
         @apply text-primary underline underline-offset-4;
+    }
+    .prose-like a[target='_blank']::after {
+        content: '↗';
+        @apply ml-0.5 align-baseline text-[0.8em] text-muted-foreground no-underline;
+    }
+
+    /* Code block toolbar: language label + copy button (built in article-content.tsx) */
+    .code-block {
+        @apply relative my-6;
+    }
+    .code-block pre {
+        @apply my-0 pt-12;
+    }
+    .code-block__bar {
+        @apply pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between rounded-t-md border-b border-border/60 bg-muted px-4 py-1.5;
+    }
+    .code-block__lang {
+        @apply font-mono text-[11px] font-medium tracking-wide text-muted-foreground uppercase;
+    }
+    .code-block__copy {
+        @apply pointer-events-auto rounded border border-border bg-background/60 px-2 py-0.5 text-[11px] font-medium text-muted-foreground transition-colors hover:text-foreground;
     }
 
     /* highlight.js — GitHub-ish tokens, works in light and dark */

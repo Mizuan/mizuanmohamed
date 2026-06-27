@@ -10,6 +10,7 @@ type Article = {
     slug: string;
     excerpt: string | null;
     content: string;
+    reading_time: number;
     featured_image: string | null;
     published_at: string | null;
     category: { id: number; name: string; slug: string } | null;
@@ -73,6 +74,8 @@ export default function ArticleShow({ article }: Props) {
                                 <span>{article.category.name}</span>
                             </>
                         )}
+                        <span>·</span>
+                        <span>{article.reading_time} min read</span>
                     </div>
                 </header>
 
@@ -90,7 +93,7 @@ export default function ArticleShow({ article }: Props) {
                 />
 
                 {article.tags.length > 0 && (
-                    <footer className="mt-12 border-t pt-6">
+                    <div className="mt-12 border-t pt-6">
                         <p className="text-xs tracking-wide text-muted-foreground uppercase">
                             Tagged
                         </p>
@@ -104,8 +107,18 @@ export default function ArticleShow({ article }: Props) {
                                 </span>
                             ))}
                         </div>
-                    </footer>
+                    </div>
                 )}
+
+                <footer className="mt-12 border-t pt-8">
+                    <Link
+                        href={articlesIndex()}
+                        className="group inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
+                        Back to all writing
+                    </Link>
+                </footer>
             </article>
         </>
     );

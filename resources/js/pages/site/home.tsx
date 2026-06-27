@@ -192,7 +192,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                             data-reveal
                             className="bg-background p-8"
                         >
-                            <p className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                            <p className="font-serif text-3xl font-medium tracking-tight sm:text-4xl">
                                 {stat.value}
                             </p>
                             <p className="mt-2 text-sm text-muted-foreground">

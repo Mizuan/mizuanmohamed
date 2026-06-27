@@ -73,7 +73,7 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                     </Button>
                 }
             >
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:pb-0 lg:grid-cols-4">
                     <StatCard
                         title="Articles"
                         icon={Newspaper}
@@ -205,13 +205,13 @@ function StatCard({
     return (
         <Link
             href={href}
-            className="group block rounded-lg border bg-card p-4 transition-colors hover:bg-accent"
+            className="group block w-56 shrink-0 snap-start rounded-lg border bg-card p-4 transition-colors hover:bg-accent sm:w-auto sm:shrink"
         >
             <div className="flex items-center justify-between">
                 <p className="text-xs font-medium text-muted-foreground">
                     {title}
                 </p>
-                <Icon className="size-4 text-muted-foreground" />
+                <Icon className="size-5 text-muted-foreground" />
             </div>
             <p className="mt-1.5 text-2xl font-semibold">{primary}</p>
             {sub && (
