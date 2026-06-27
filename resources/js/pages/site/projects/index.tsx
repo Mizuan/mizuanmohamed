@@ -2,12 +2,10 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { ArrowUpRight } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-import { ProjectArtwork } from '@/components/site/project-artwork';
+import { useEffect, useRef } from 'react';
+import { ProjectColorArtwork } from '@/components/site/project-color-artwork';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteNav } from '@/components/site/site-nav';
-import { screenshotUrl } from '@/lib/preview';
-import { storageUrl } from '@/lib/storage';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,55 +24,7 @@ type Props = {
     projects: Project[];
 };
 
-// Projects whose live sites can't be screenshotted (auth-gated / gov portals);
-// these fall back to the generative artwork instead.
-const NO_SCREENSHOT = new Set([
-    'judicial-service-commission-website',
-    'recruitment-portal-of-judicial-service-commission',
-]);
-
 const pad = (n: number) => String(n).padStart(2, '0');
-
-/**
- * Full-bleed project screenshot with a black vignette so text reads on top.
- * Priority: uploaded image → live screenshot → generative artwork.
- */
-function Backdrop({
-    slug,
-    image,
-    link,
-}: {
-    slug: string;
-    image: string | null;
-    link: string | null;
-}) {
-    const [failed, setFailed] = useState(false);
-    const src = image
-        ? storageUrl(image)
-        : !failed && link
-          ? screenshotUrl(link, 1600)
-          : null;
-
-    return (
-        <div className="absolute inset-0">
-            {src ? (
-                <img
-                    src={src}
-                    alt=""
-                    loading="lazy"
-                    onError={() => setFailed(true)}
-                    className="size-full object-cover object-top"
-                />
-            ) : (
-                <ProjectArtwork seed={slug} />
-            )}
-            <div
-                aria-hidden
-                className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-black/55"
-            />
-        </div>
-    );
-}
 
 export default function ProjectsIndex({ projects }: Props) {
     const root = useRef<HTMLDivElement | null>(null);
@@ -89,8 +39,7 @@ export default function ProjectsIndex({ projects }: Props) {
             return;
         }
 
-        // Smooth (eased) scrolling, synced to ScrollTrigger so the stack
-        // animations stay glued to the scroll position.
+        // Smooth, eased scrolling synced to ScrollTrigger.
         const lenis = new Lenis({ lerp: 0.1 });
         lenis.on('scroll', ScrollTrigger.update);
         const onTick = (time: number) => lenis.raf(time * 1000);
@@ -98,20 +47,15 @@ export default function ProjectsIndex({ projects }: Props) {
         gsap.ticker.lagSmoothing(0);
 
         const ctx = gsap.context(() => {
-            const sections =
-                gsap.utils.toArray<HTMLElement>('.proj-section');
+            const sections = gsap.utils.toArray<HTMLElement>('.proj-section');
 
             sections.forEach((section, i) => {
-                // The last section is never covered, so it doesn't recede.
                 if (i === sections.length - 1) {
                     return;
                 }
 
                 const card = section.querySelector('.proj-card');
                 const dim = section.querySelector('.proj-dim');
-
-                // As the next section scrolls up over this one, scale it down
-                // and darken it so it appears to settle behind.
                 const trigger = {
                     trigger: section,
                     start: 'top top',
@@ -120,7 +64,7 @@ export default function ProjectsIndex({ projects }: Props) {
                 };
 
                 gsap.to(card, {
-                    scale: 0.92,
+                    scale: 0.94,
                     ease: 'none',
                     scrollTrigger: trigger,
                 });
@@ -160,75 +104,83 @@ export default function ProjectsIndex({ projects }: Props) {
                 </div>
             ) : (
                 projects.map((project, i) => {
-                    const chips = project.technologies?.length
-                        ? project.technologies
-                        : (project.tags ?? []);
+                    const stack = project.technologies?.length
+                        ? project.technologies.join(' / ')
+                        : (project.tags ?? []).join(' / ');
 
                     return (
                         <section
                             key={project.id}
-                            className="proj-section sticky top-0 h-svh overflow-hidden bg-black"
+                            className="proj-section sticky top-0 h-svh overflow-hidden bg-background"
                         >
-                            <div className="proj-card relative size-full origin-center will-change-transform">
-                                <Backdrop
-                                    slug={project.slug}
-                                    image={project.image}
-                                    link={
-                                        NO_SCREENSHOT.has(project.slug)
-                                            ? null
-                                            : project.link
-                                    }
-                                />
+                            <div className="proj-card relative grid h-full origin-center grid-rows-[32vh_1fr] will-change-transform lg:grid-cols-[3fr_2fr] lg:grid-rows-none">
+                                {/* Artwork */}
+                                <div className="order-1 lg:order-2">
+                                    <ProjectColorArtwork seed={project.slug} />
+                                </div>
 
-                                {/* Index number */}
-                                <span className="pointer-events-none absolute top-24 left-5 font-display text-[clamp(3rem,9vw,7rem)] leading-none font-semibold tabular-nums select-none lg:left-10">
-                                    {pad(i + 1)}
-                                </span>
+                                {/* Details */}
+                                <div className="order-2 flex flex-col overflow-y-auto px-6 pt-6 pb-10 lg:order-1 lg:px-12 lg:pt-28 lg:pb-14">
+                                    <div className="flex items-center justify-between font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                                        <span className="tabular-nums">
+                                            {pad(i + 1)} / {pad(total)}
+                                        </span>
+                                        <span className="tabular-nums">
+                                            2025
+                                        </span>
+                                    </div>
 
-                                {/* Position */}
-                                <span className="absolute top-24 right-5 font-display text-sm font-medium text-muted-foreground tabular-nums lg:right-10">
-                                    {pad(i + 1)} / {pad(total)}
-                                </span>
+                                    <div className="flex flex-1 flex-col justify-center py-6">
+                                        <div className="max-w-2xl">
+                                            {project.link ? (
+                                                <a
+                                                    href={project.link}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="group block w-fit"
+                                                >
+                                                    <h2 className="font-display text-[clamp(1.75rem,3.6vw,3.25rem)] leading-[0.98] font-semibold tracking-[-0.02em] uppercase underline-offset-[6px] group-hover:underline">
+                                                        {project.title}
+                                                    </h2>
+                                                </a>
+                                            ) : (
+                                                <h2 className="font-display text-[clamp(1.75rem,3.6vw,3.25rem)] leading-[0.98] font-semibold tracking-[-0.02em] uppercase">
+                                                    {project.title}
+                                                </h2>
+                                            )}
 
-                                {/* Title + meta */}
-                                <div className="absolute inset-x-0 bottom-16 px-6 lg:px-10">
-                                    <div className="max-w-3xl">
-                                        <h2 className="font-display text-[clamp(1.375rem,3.2vw,2.5rem)] leading-none font-semibold tracking-[-0.02em] uppercase">
-                                            {project.title}
-                                        </h2>
-                                        {chips.length > 0 && (
-                                            <div className="mt-4 flex flex-wrap gap-2">
-                                                {chips.slice(0, 4).map((chip) => (
-                                                    <span
-                                                        key={chip}
-                                                        className="rounded-full border px-3 py-1 font-display text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase"
-                                                    >
-                                                        {chip}
+                                            {project.description && (
+                                                <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
+                                                    {project.description}
+                                                </p>
+                                            )}
+
+                                            {stack && (
+                                                <p className="mt-6 font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
+                                                    Stack:{' '}
+                                                    <span className="text-foreground">
+                                                        {stack}
                                                     </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {project.description && (
-                                            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
-                                                {project.description}
-                                            </p>
-                                        )}
-                                        {project.link && (
-                                            <a
-                                                href={project.link}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="mt-5 inline-flex items-center gap-1.5 rounded-full border bg-background/60 px-4 py-2 font-display text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase backdrop-blur transition-colors hover:text-foreground"
-                                            >
-                                                Visit
-                                                <ArrowUpRight className="size-3.5" />
-                                            </a>
-                                        )}
+                                                </p>
+                                            )}
+
+                                            {project.link && (
+                                                <a
+                                                    href={project.link}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="mt-7 inline-flex items-center gap-1.5 rounded-full border px-5 py-2.5 font-display text-xs font-medium tracking-[0.12em] text-muted-foreground uppercase transition-colors hover:bg-foreground hover:text-background"
+                                                >
+                                                    Visit
+                                                    <ArrowUpRight className="size-3.5" />
+                                                </a>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Darkens as the next project covers this one */}
-                                <div className="proj-dim pointer-events-none absolute inset-0 bg-black opacity-0" />
+                                {/* Recede overlay as the next project covers this one */}
+                                <div className="proj-dim pointer-events-none absolute inset-0 z-10 bg-black opacity-0" />
                             </div>
                         </section>
                     );
