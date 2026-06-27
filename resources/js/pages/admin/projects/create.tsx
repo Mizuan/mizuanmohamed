@@ -131,7 +131,7 @@ export default function ProjectCreate() {
                                     <Label htmlFor="image">
                                         Image{' '}
                                         <span className="text-xs text-muted-foreground">
-                                            (optional · max 4 MB)
+                                            (optional · max 5 MB)
                                         </span>
                                     </Label>
                                     <Input

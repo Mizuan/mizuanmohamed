@@ -17,17 +17,35 @@ class ImageOptimizer
      * Re-encode an upload at capped quality and store it on the given disk.
      * Returns the stored path (relative to the disk root).
      */
+    /**
+     * The longest edge (in pixels) a stored image is scaled down to.
+     */
+    public const MAX_DIMENSION = 2400;
+
     public function store(UploadedFile $file, string $directory, string $disk = 'public'): string
     {
+        $directory = trim($directory, '/');
         $extension = $this->normaliseExtension($file);
         $filename = Str::ulid().'.'.$extension;
-        $path = trim($directory, '/').'/'.$filename;
+        $path = $directory.'/'.$filename;
 
-        $encoded = $this->manager
-            ->decodePath($file->getRealPath())
-            ->encodeUsingFileExtension($extension, quality: self::QUALITY);
+        try {
+            // Decoding a high-resolution photo with GD is memory-hungry, so
+            // lift the ceiling for this request before reading it.
+            @ini_set('memory_limit', '512M');
 
-        Storage::disk($disk)->put($path, (string) $encoded);
+            $encoded = $this->manager
+                ->decodePath($file->getRealPath())
+                ->scaleDown(self::MAX_DIMENSION, self::MAX_DIMENSION)
+                ->encodeUsingFileExtension($extension, quality: self::QUALITY);
+
+            Storage::disk($disk)->put($path, (string) $encoded);
+        } catch (\Throwable $e) {
+            // If optimisation fails (e.g. an unusual format), keep the upload
+            // working by storing the original file unprocessed.
+            report($e);
+            Storage::disk($disk)->putFileAs($directory, $file, $filename);
+        }
 
         return $path;
     }

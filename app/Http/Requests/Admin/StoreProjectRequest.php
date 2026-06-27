@@ -26,7 +26,7 @@ class StoreProjectRequest extends FormRequest
             'tags.*' => ['string', 'max:50'],
             'technologies' => ['nullable', 'array'],
             'technologies.*' => ['string', 'max:50'],
-            'image' => ['nullable', 'image', 'max:4096'],
+            'image' => ['nullable', 'image', 'max:5120'],
             'link' => ['nullable', 'url', 'max:255'],
             'is_published' => ['required', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],

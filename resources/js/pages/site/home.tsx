@@ -153,11 +153,11 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                                     All projects →
                                 </Link>
                             </div>
-                            <div className="grid grid-cols-3 gap-3 lg:gap-4">
+                            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:pb-0">
                                 {featuredProjects.slice(0, 3).map((project, i) => {
                                     const inner = (
                                         <>
-                                            <div className="relative h-[clamp(7rem,18vh,12rem)] overflow-hidden rounded-lg border bg-card">
+                                            <div className="relative h-[clamp(8.5rem,22vh,13rem)] overflow-hidden rounded-lg border bg-card">
                                                 {project.image ? (
                                                     <img
                                                         src={project.image}
@@ -189,7 +189,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                                             href={project.link}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="group block"
+                                            className="group block w-[47%] shrink-0 snap-start sm:w-auto"
                                         >
                                             {inner}
                                         </a>
@@ -197,7 +197,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                                         <Link
                                             key={project.id}
                                             href={projectsIndex()}
-                                            className="group block"
+                                            className="group block w-[47%] shrink-0 snap-start sm:w-auto"
                                         >
                                             {inner}
                                         </Link>

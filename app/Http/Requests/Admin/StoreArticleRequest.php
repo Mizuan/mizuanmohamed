@@ -28,7 +28,7 @@ class StoreArticleRequest extends FormRequest
             'category_id' => ['nullable', Rule::exists('categories', 'id')],
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => [Rule::exists('tags', 'id')],
-            'featured_image' => ['nullable', 'image', 'max:4096'],
+            'featured_image' => ['nullable', 'image', 'max:5120'],
             'status' => ['required', new Enum(ArticleStatus::class)],
             'published_at' => ['nullable', 'date'],
         ];

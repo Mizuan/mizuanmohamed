@@ -286,7 +286,7 @@ return '';
                                     <Label htmlFor="featured_image">
                                         Featured image{' '}
                                         <span className="text-xs text-muted-foreground">
-                                            (optional · max 4 MB)
+                                            (optional · max 5 MB)
                                         </span>
                                     </Label>
                                     {existingImageUrl && !preview && (
