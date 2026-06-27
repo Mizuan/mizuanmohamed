@@ -158,18 +158,9 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                                     const inner = (
                                         <>
                                             <div className="relative h-[clamp(8.5rem,22vh,13rem)] overflow-hidden rounded-lg border bg-card">
-                                                {project.image ? (
-                                                    <img
-                                                        src={project.image}
-                                                        alt={project.title}
-                                                        loading="lazy"
-                                                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                                    />
-                                                ) : (
-                                                    <ProjectArtwork
-                                                        seed={project.slug}
-                                                    />
-                                                )}
+                                                <ProjectArtwork
+                                                    seed={project.slug}
+                                                />
                                                 <span className="absolute top-2 left-2.5 font-display text-[11px] font-medium text-background/80 mix-blend-difference">
                                                     0{i + 1}
                                                 </span>

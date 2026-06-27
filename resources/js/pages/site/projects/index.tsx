@@ -5,6 +5,7 @@ import { SeoHead } from '@/components/site/seo-head';
 import { SiteNav } from '@/components/site/site-nav';
 import { SplitHeadline } from '@/components/site/split-headline';
 import { screenshotUrl } from '@/lib/preview';
+import { storageUrl } from '@/lib/storage';
 
 type Project = {
     id: number;
@@ -44,7 +45,11 @@ function Backdrop({
 }) {
     const [failed, setFailed] = useState(false);
     // Priority: uploaded image (manual override) → live screenshot → artwork.
-    const src = image ?? (!failed && link ? screenshotUrl(link, 1600) : null);
+    const src = image
+        ? storageUrl(image)
+        : !failed && link
+          ? screenshotUrl(link, 1600)
+          : null;
 
     return (
         <div className="absolute inset-0 animate-in fade-in duration-700">

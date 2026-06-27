@@ -28,16 +28,7 @@ export function ProjectCard({
     const content = (
         <>
             <div className="relative aspect-16/10 overflow-hidden bg-muted">
-                {project.image ? (
-                    <img
-                        src={project.image}
-                        alt={project.title}
-                        loading="lazy"
-                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                ) : (
-                    <ProjectArtwork seed={project.slug || project.title} />
-                )}
+                <ProjectArtwork seed={project.slug || project.title} />
             </div>
             <div className="flex flex-1 flex-col p-6">
                 <div className="flex items-start justify-between gap-3">
