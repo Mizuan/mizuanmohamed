@@ -19,7 +19,13 @@ const prefersReducedMotion = (): boolean =>
  * pointer. Honours reduced-motion (renders a single static frame) and pauses
  * automatically while the tab is hidden.
  */
-export function HeroCanvas({ className }: { className?: string }) {
+export function HeroCanvas({
+    className,
+    tone,
+}: {
+    className?: string;
+    tone?: 'light' | 'dark';
+}) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const { resolvedAppearance } = useAppearance();
 
@@ -36,7 +42,7 @@ export function HeroCanvas({ className }: { className?: string }) {
             return;
         }
 
-        const isDark = resolvedAppearance === 'dark';
+        const isDark = tone ? tone === 'dark' : resolvedAppearance === 'dark';
         const ink = isDark ? '255, 255, 255' : '17, 17, 17';
         const reduced = prefersReducedMotion();
 
@@ -170,7 +176,7 @@ export function HeroCanvas({ className }: { className?: string }) {
             window.removeEventListener('pointerleave', onPointerLeave);
             document.removeEventListener('visibilitychange', onVisibility);
         };
-    }, [resolvedAppearance]);
+    }, [resolvedAppearance, tone]);
 
     return (
         <canvas

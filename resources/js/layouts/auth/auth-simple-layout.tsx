@@ -25,13 +25,13 @@ export default function AuthSimpleLayout({
                             className="flex flex-col items-center gap-3"
                         >
                             <BrandMark className="size-11 text-xl" />
-                            <span className="font-serif text-lg leading-none font-medium tracking-tight">
+                            <span className="font-display text-lg leading-none font-medium tracking-tight">
                                 Mizuan.dev
                             </span>
                         </Link>
 
                         <div className="space-y-1.5 text-center">
-                            <h1 className="font-serif text-2xl font-medium tracking-tight">
+                            <h1 className="font-display text-2xl font-medium tracking-tight">
                                 {title}
                             </h1>
                             <p className="text-sm text-balance text-muted-foreground">

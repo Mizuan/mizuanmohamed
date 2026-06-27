@@ -23,15 +23,19 @@ const navLinks = [
 ];
 
 /**
- * The shared public-site navigation: a fixed bar that is transparent over the
- * top of the page and fades to a solid, blurred background once scrolled.
- * Includes a mobile sheet menu and a theme toggle.
+ * The shared public-site top bar: a print-style chrome with a menu trigger on
+ * the left, the name centred, and the year + theme toggle on the right. The
+ * navigation itself lives in a full side drawer so pages stay full-bleed.
  */
-export function SiteNav() {
+export function SiteNav({ darkTop = false }: { darkTop?: boolean }) {
     const { resolvedAppearance, updateAppearance } = useAppearance();
     const currentUrl = usePage().url;
     const [scrolled, setScrolled] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    // Over a forced-dark hero, the unscrolled bar adopts dark-theme tokens so
+    // its text stays legible; once scrolled into the solid bar it reverts.
+    const onDark = darkTop && !scrolled;
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 24);
@@ -46,87 +50,53 @@ export function SiteNav() {
     return (
         <header
             className={cn(
-                'fixed inset-x-0 top-0 z-40 border-b transition-colors duration-300',
+                'fixed inset-x-0 top-0 z-40 border-b text-foreground transition-colors duration-300',
                 scrolled
-                    ? 'border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60'
+                    ? 'border-border bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/60'
                     : 'border-transparent bg-transparent',
+                onDark && 'dark',
             )}
         >
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
-                <Link
-                    href={home()}
-                    className="inline-flex items-center text-base font-semibold tracking-tight"
-                >
-                    Mizuan.dev
-                </Link>
-
-                <nav className="hidden items-center gap-8 text-sm md:flex">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className={cn(
-                                'transition-colors',
-                                isActive(link.href)
-                                    ? 'font-medium text-foreground'
-                                    : 'text-muted-foreground hover:text-foreground',
-                            )}
+            <div className="relative flex items-center justify-between px-5 py-3.5 font-display text-xs font-medium tracking-[0.12em] uppercase lg:px-7">
+                <Sheet open={open} onOpenChange={setOpen}>
+                    <SheetTrigger asChild>
+                        <button
+                            type="button"
+                            className="group inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+                            aria-label="Open menu"
                         >
-                            {link.label}
-                        </Link>
-                    ))}
-                </nav>
-
-                <div className="flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() =>
-                            updateAppearance(
-                                resolvedAppearance === 'dark'
-                                    ? 'light'
-                                    : 'dark',
-                            )
-                        }
-                        aria-label="Toggle theme"
-                        className="rounded-full border p-2 text-muted-foreground transition-colors hover:text-foreground"
+                            <Menu className="size-4" />
+                            <span className="hidden sm:inline">Menu</span>
+                        </button>
+                    </SheetTrigger>
+                    <SheetContent
+                        side="right"
+                        className="w-full border-l p-0 sm:max-w-md"
                     >
-                        {resolvedAppearance === 'dark' ? (
-                            <Sun className="size-4" />
-                        ) : (
-                            <Moon className="size-4" />
-                        )}
-                    </button>
-
-                    <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-                        <SheetTrigger asChild>
-                            <button
-                                type="button"
-                                aria-label="Open menu"
-                                className="rounded-full border p-2 text-muted-foreground transition-colors hover:text-foreground md:hidden"
-                            >
-                                <Menu className="size-4" />
-                            </button>
-                        </SheetTrigger>
-                        <SheetContent side="right" className="w-72 p-6">
-                            <SheetTitle className="sr-only">Menu</SheetTitle>
-                            <nav className="mt-8 flex flex-col gap-1 text-lg">
-                                {navLinks.map((link) => (
+                        <SheetTitle className="sr-only">Menu</SheetTitle>
+                        <div className="flex h-full flex-col justify-between p-8 lg:p-10">
+                            <nav className="mt-10 flex flex-col">
+                                {navLinks.map((link, i) => (
                                     <Link
                                         key={link.href}
                                         href={link.href}
-                                        onClick={() => setMobileOpen(false)}
+                                        onClick={() => setOpen(false)}
                                         className={cn(
-                                            'rounded-md px-2 py-2 transition-colors',
+                                            'group flex items-baseline gap-4 border-b py-4 font-display text-3xl font-medium tracking-tight transition-colors sm:text-4xl',
                                             isActive(link.href)
-                                                ? 'font-semibold text-foreground'
+                                                ? 'text-foreground'
                                                 : 'text-muted-foreground hover:text-foreground',
                                         )}
                                     >
+                                        <span className="font-sans text-xs text-muted-foreground tabular-nums">
+                                            0{i + 1}
+                                        </span>
                                         {link.label}
                                     </Link>
                                 ))}
                             </nav>
-                            <div className="mt-10 flex items-center gap-4 border-t pt-6 text-muted-foreground">
+
+                            <div className="flex items-center gap-5 border-t pt-6 text-muted-foreground">
                                 {socials.map(({ label, href, Icon }) => (
                                     <a
                                         key={label}
@@ -148,8 +118,39 @@ export function SiteNav() {
                                     </a>
                                 ))}
                             </div>
-                        </SheetContent>
-                    </Sheet>
+                        </div>
+                    </SheetContent>
+                </Sheet>
+
+                <Link
+                    href={home()}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-medium tracking-[0.14em] whitespace-nowrap transition-opacity hover:opacity-70 lg:text-sm"
+                >
+                    Mizuan Mohamed
+                </Link>
+
+                <div className="flex items-center gap-3">
+                    <span className="hidden text-muted-foreground sm:inline">
+                        &copy;{new Date().getFullYear()}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            updateAppearance(
+                                resolvedAppearance === 'dark'
+                                    ? 'light'
+                                    : 'dark',
+                            )
+                        }
+                        aria-label="Toggle theme"
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        {resolvedAppearance === 'dark' ? (
+                            <Sun className="size-4" />
+                        ) : (
+                            <Moon className="size-4" />
+                        )}
+                    </button>
                 </div>
             </div>
         </header>

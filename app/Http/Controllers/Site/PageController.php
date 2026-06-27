@@ -12,6 +12,12 @@ class PageController extends Controller
     {
         abort_unless($page->is_published, 404);
 
+        if ($page->slug === 'about') {
+            return inertia('site/about', [
+                'metaDescription' => $page->meta_description,
+            ]);
+        }
+
         return inertia('site/pages/show', [
             'page' => [
                 'id' => $page->id,
