@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, ArrowUpRight, Globe, Mail } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { HeroCanvas } from '@/components/site/hero-canvas';
+import { AmbientGlow } from '@/components/site/ambient-glow';
 import { LocalClock } from '@/components/site/local-clock';
 import { ProjectArtwork } from '@/components/site/project-artwork';
 import { ProjectCard } from '@/components/site/project-card';
@@ -100,13 +100,10 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
 
             {/* ── Hero (always dark) ─────────────────────────────── */}
             <section className="dark relative isolate flex h-svh min-h-160 flex-col overflow-hidden bg-background text-foreground">
-                <HeroCanvas
-                    className="absolute inset-0 -z-10 h-full w-full"
-                    tone="dark"
-                />
+                <AmbientGlow className="absolute inset-0 -z-10 size-full" />
                 <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-background/0 via-background/0 to-background"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-32 bg-linear-to-b from-transparent to-background"
                 />
 
                 {/* Corner registration marks */}
