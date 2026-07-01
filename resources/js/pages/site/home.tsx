@@ -1,18 +1,14 @@
 import { Link } from '@inertiajs/react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, ArrowUpRight, Globe, Mail } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Mail } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { HeroCanvas } from '@/components/site/hero-canvas';
-import { LocalClock } from '@/components/site/local-clock';
-import { ProjectArtwork } from '@/components/site/project-artwork';
-import { ProjectCard } from '@/components/site/project-card';
+import { Hero } from '@/components/site/hero';
+import { ProjectList } from '@/components/site/project-list';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteNav } from '@/components/site/site-nav';
-import { SplitHeadline } from '@/components/site/split-headline';
-import { cn } from '@/lib/utils';
 import { index as articlesIndex, show as articleShow } from '@/routes/site/articles';
 import { index as projectsIndex } from '@/routes/site/projects';
 
@@ -52,22 +48,10 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
 
         const ctx = gsap.context(() => {
             if (reduce) {
-                gsap.set('[data-reveal], .hero-fade', {
-                    opacity: 1,
-                    y: 0,
-                });
+                gsap.set('[data-reveal]', { opacity: 1, y: 0 });
 
                 return;
             }
-
-            gsap.from('.hero-fade', {
-                y: 24,
-                opacity: 0,
-                duration: 0.8,
-                ease: 'power3.out',
-                stagger: 0.12,
-                delay: 0.6,
-            });
 
             gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
                 gsap.from(el, {
@@ -89,128 +73,17 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
     return (
         <div
             ref={root}
-            className="min-h-svh bg-background text-foreground antialiased"
+            className="dark min-h-svh bg-background text-foreground antialiased"
         >
             <SeoHead
                 title="Mizuan Mohamed — Full-Stack Developer"
                 description="Full-stack developer in Malé, Maldives. Seven years building web apps with Laravel, React, and TypeScript. Selected work, writing, and notes from the modern web."
             />
 
-            <SiteNav darkTop />
+            <SiteNav />
 
-            {/* ── Hero (always dark) ─────────────────────────────── */}
-            <section className="dark relative isolate flex h-svh min-h-160 flex-col overflow-hidden bg-background text-foreground">
-                <HeroCanvas
-                    className="absolute inset-0 -z-10 h-full w-full"
-                    tone="dark"
-                />
-                <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-b from-background/0 via-background/0 to-background"
-                />
-
-                {/* Corner registration marks */}
-                {[
-                    'left-5 top-24 lg:left-7',
-                    'right-5 top-24 lg:right-7',
-                    'bottom-24 left-5 lg:left-7',
-                    'bottom-24 right-5 lg:right-7',
-                ].map((pos) => (
-                    <span
-                        key={pos}
-                        aria-hidden
-                        className={cn(
-                            'pointer-events-none absolute font-display text-lg text-muted-foreground/40 select-none',
-                            pos,
-                        )}
-                    >
-                        +
-                    </span>
-                ))}
-
-                <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 pt-24 pb-8 lg:px-8">
-                    {/* Top half: centered statement */}
-                    <div className="flex flex-1 flex-col items-center justify-center py-6 text-center">
-                        <p className="hero-fade flex items-center justify-center gap-2 font-display text-xs font-medium tracking-[0.22em] text-muted-foreground uppercase">
-                            <Globe className="size-3.5" strokeWidth={1.5} />
-                            Malé, Maldives
-                        </p>
-                        <SplitHeadline
-                            text="Full-Stack Software Developer"
-                            className="mt-5 max-w-3xl font-display text-[clamp(2rem,6vw,4.25rem)] leading-[0.95] font-semibold tracking-[-0.02em] uppercase"
-                        />
-                    </div>
-
-                    {/* Bottom half: selected-work teaser */}
-                    {featuredProjects.length > 0 && (
-                        <div className="hero-fade">
-                            <div className="mb-4 flex items-end justify-between font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                                <span>Selected work</span>
-                                <Link
-                                    href={projectsIndex()}
-                                    className="transition-colors hover:text-foreground"
-                                >
-                                    All projects →
-                                </Link>
-                            </div>
-                            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:pb-0">
-                                {featuredProjects.slice(0, 3).map((project, i) => {
-                                    const inner = (
-                                        <>
-                                            <div className="relative h-[clamp(8.5rem,22vh,13rem)] overflow-hidden rounded-lg border bg-card">
-                                                <ProjectArtwork
-                                                    seed={project.slug}
-                                                />
-                                                <span className="absolute top-2 left-2.5 font-display text-[11px] font-medium text-background/80 mix-blend-difference">
-                                                    0{i + 1}
-                                                </span>
-                                            </div>
-                                            <div className="mt-2.5 flex items-center justify-between gap-2">
-                                                <h3 className="truncate text-xs font-medium sm:text-sm">
-                                                    {project.title}
-                                                </h3>
-                                                <ArrowUpRight className="size-4 shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
-                                            </div>
-                                        </>
-                                    );
-
-                                    return project.link ? (
-                                        <a
-                                            key={project.id}
-                                            href={project.link}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="group block w-[47%] shrink-0 snap-start sm:w-auto"
-                                        >
-                                            {inner}
-                                        </a>
-                                    ) : (
-                                        <Link
-                                            key={project.id}
-                                            href={projectsIndex()}
-                                            className="group block w-[47%] shrink-0 snap-start sm:w-auto"
-                                        >
-                                            {inner}
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Framed bottom bar: availability · contact · live clock */}
-                    <div className="hero-fade mt-6 flex items-end justify-between gap-4 font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase sm:text-xs">
-                        <span>Available for work</span>
-                        <a
-                            href="mailto:mizuan.mohamed@gmail.com"
-                            className="transition-colors hover:text-foreground"
-                        >
-                            Contact
-                        </a>
-                        <LocalClock className="tabular-nums" />
-                    </div>
-                </div>
-            </section>
+            {/* ── Hero: warm doorway of light ────────────────────── */}
+            <Hero />
 
             {/* ── Statement / about ──────────────────────────────── */}
             <section className="mx-auto max-w-6xl px-6 py-28 lg:px-8 lg:py-40">
@@ -224,17 +97,17 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                     data-reveal
                     className="mt-8 max-w-4xl font-display text-[clamp(1.5rem,4vw,2.75rem)] leading-[1.2] font-medium tracking-[-0.02em] text-balance"
                 >
-                    I care about the whole arc, from the data model to the last
-                    micro-interaction. Good software feels{' '}
+                    I enjoy building software that&apos;s{' '}
                     <span className="text-muted-foreground">
-                        obvious in hindsight
+                        clean, intuitive, and reliable
                     </span>
-                    : quick, considered, and quietly reliable.
+                    , with attention to both the technical foundation and the
+                    user experience.
                 </p>
 
                 <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border bg-border sm:grid-cols-3">
                     {[
-                        { value: '7+', label: 'Years building for the web' },
+                        { value: '9+', label: 'Years building for the web' },
                         { value: 'Team', label: 'Leading delivery at a gov SOE' },
                         { value: 'Full-stack', label: 'Backend, frontend & infra' },
                     ].map((stat) => (
@@ -266,21 +139,15 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                         </h2>
                         <Link
                             href={projectsIndex()}
-                            className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                            className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-brand"
                         >
                             All projects
                             <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                         </Link>
                     </div>
 
-                    <div className="grid gap-6 sm:grid-cols-2">
-                        {featuredProjects.map((project, i) => (
-                            <ProjectCard
-                                key={project.id}
-                                project={project}
-                                large={i === 0 && featuredProjects.length > 2}
-                            />
-                        ))}
+                    <div data-reveal>
+                        <ProjectList projects={featuredProjects} />
                     </div>
                 </section>
             )}
@@ -298,7 +165,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                             </h2>
                             <Link
                                 href={articlesIndex()}
-                                className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                                className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-brand"
                             >
                                 All articles
                                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -324,9 +191,9 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                                             </time>
                                         )}
                                         <div className="min-w-0 flex-1">
-                                            <h3 className="flex items-center gap-2 text-xl font-medium tracking-tight">
+                                            <h3 className="flex items-center gap-2 text-xl font-medium tracking-tight transition-colors group-hover:text-brand">
                                                 {article.title}
-                                                <ArrowUpRight className="size-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
+                                                <ArrowUpRight className="size-4 shrink-0 text-brand opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
                                             </h3>
                                             {article.excerpt && (
                                                 <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
@@ -364,7 +231,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                         <MagneticLink
                             href="mailto:mizuan.mohamed@gmail.com"
                             external
-                            className="group inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-3.5 text-sm font-medium text-background transition-transform hover:scale-[1.02]"
+                            className="group inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-medium text-brand-foreground transition-transform hover:scale-[1.02]"
                         >
                             <Mail className="size-4" />
                             mizuan.mohamed@gmail.com

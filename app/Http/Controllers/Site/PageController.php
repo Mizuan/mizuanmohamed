@@ -19,6 +19,12 @@ class PageController extends Controller
             ]);
         }
 
+        if ($page->slug === 'contact') {
+            return inertia('site/contact', [
+                'metaDescription' => $page->meta_description,
+            ]);
+        }
+
         return inertia('site/pages/show', [
             'page' => [
                 'id' => $page->id,

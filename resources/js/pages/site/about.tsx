@@ -1,10 +1,18 @@
-import { ArrowLeft, ArrowRight, Mail } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { LocalClock } from '@/components/site/local-clock';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Globe } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { HumanSilhouette } from '@/components/site/human-silhouette';
 import { SeoHead } from '@/components/site/seo-head';
+import { SiteFooter } from '@/components/site/site-footer';
 import { SiteNav } from '@/components/site/site-nav';
-import { LinkedinIcon } from '@/components/site/social-icons';
 import { SplitHeadline } from '@/components/site/split-headline';
+
+gsap.registerPlugin(ScrollTrigger);
+
+// A tileable film-grain texture (SVG fractal noise) for the cinematic overlay.
+const GRAIN =
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 type Section = {
     label: string;
@@ -54,6 +62,8 @@ const DEFAULT_SECTIONS: Section[] = [
     },
 ];
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
 export default function About({
     metaDescription,
     sections: configured,
@@ -63,161 +73,146 @@ export default function About({
 }) {
     const sections =
         configured && configured.length > 0 ? configured : DEFAULT_SECTIONS;
-    const total = sections.length;
-    const [active, setActive] = useState(0);
-
-    const go = (dir: number) =>
-        setActive((current) => (current + dir + total) % total);
+    const root = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === 'ArrowRight') {
-                go(1);
+        const reduce = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        ).matches;
+
+        const ctx = gsap.context(() => {
+            if (reduce) {
+                gsap.set('[data-reveal]', { opacity: 1, y: 0 });
+
+                return;
             }
 
-            if (event.key === 'ArrowLeft') {
-                go(-1);
-            }
-        };
+            gsap.fromTo(
+                '[data-glow]',
+                { scale: 0.94, opacity: 0.6 },
+                {
+                    scale: 1.12,
+                    opacity: 1,
+                    duration: 4,
+                    ease: 'sine.inOut',
+                    repeat: -1,
+                    yoyo: true,
+                },
+            );
 
-        window.addEventListener('keydown', onKey);
+            gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((el) => {
+                gsap.from(el, {
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.85,
+                    ease: 'power2.out',
+                    scrollTrigger: { trigger: el, start: 'top 88%' },
+                });
+            });
+        }, root);
 
-        return () => window.removeEventListener('keydown', onKey);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+        return () => ctx.revert();
     }, []);
 
-    const section = sections[active];
-
     return (
-        <div className="dark flex h-svh flex-col overflow-hidden bg-background text-foreground antialiased">
-            <SeoHead
-                title="About"
-                description={metaDescription ?? undefined}
-            />
+        <div
+            ref={root}
+            className="dark min-h-svh bg-background text-foreground antialiased"
+        >
+            <SeoHead title="About" description={metaDescription ?? undefined} />
 
             <SiteNav />
 
-            <main className="relative grid flex-1 overflow-hidden lg:grid-cols-5">
-                {/* Portrait panel */}
-                <div className="relative hidden overflow-hidden border-r bg-muted lg:col-span-2 lg:block">
-                    <img
-                        src="/mizuan-image.png"
-                        alt="Mizuan Mohamed"
-                        className="size-full object-cover grayscale contrast-110"
+            {/* ── Hero: giant ABOUT with a silhouette in the negative space ── */}
+            <section className="relative isolate flex h-svh min-h-160 flex-col items-center justify-center overflow-hidden">
+                <div
+                    data-glow
+                    aria-hidden
+                    className="absolute top-1/2 left-1/2 -z-10 h-[52%] w-[52%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px]"
+                    style={{
+                        background:
+                            'radial-gradient(circle at center, rgba(255,72,44,0.55), rgba(206,26,16,0.25) 46%, transparent 72%)',
+                    }}
+                />
+
+                <p className="absolute top-24 left-1/2 flex -translate-x-1/2 items-center gap-2 font-display text-xs font-medium tracking-[0.22em] text-white/60 uppercase">
+                    <Globe className="size-3.5" strokeWidth={1.5} />
+                    Malé, Maldives — Full-Stack Developer
+                </p>
+
+                <div className="relative">
+                    <SplitHeadline
+                        text="About"
+                        className="font-display text-[clamp(4.5rem,27vw,20rem)] leading-none font-bold tracking-[-0.04em] text-brand uppercase"
                     />
-                    <div
-                        aria-hidden
-                        className="absolute inset-0 bg-linear-to-t from-background/40 via-transparent to-background/10"
-                    />
-                    <span className="absolute bottom-6 left-6 font-display text-[11px] font-medium tracking-[0.18em] text-foreground/80 uppercase mix-blend-difference">
-                        Mizuan Mohamed — Malé, MV
-                    </span>
+                    <HumanSilhouette className="absolute bottom-0 left-1/2 z-20 h-[62%] -translate-x-1/2 translate-y-[14%]" />
                 </div>
 
-                {/* Content */}
-                <div className="relative isolate flex flex-col px-6 pt-24 pb-28 lg:col-span-3 lg:px-14 lg:pt-28">
-                    {/* Mobile full-bleed portrait — dark, immersive overlay */}
-                    <div
-                        aria-hidden
-                        className="absolute inset-0 -z-10 lg:hidden"
+                <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 z-10 opacity-[0.13] mix-blend-overlay"
+                    style={{ backgroundImage: GRAIN }}
+                />
+
+                <span
+                    aria-hidden
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 font-display text-[11px] font-medium tracking-[0.24em] text-white/40 uppercase"
+                >
+                    Scroll
+                </span>
+            </section>
+
+            {/* ── Editable sections as cinematic editorial blocks ── */}
+            <div className="mx-auto w-full max-w-6xl px-6 pb-32 lg:px-8 lg:pb-48">
+                {sections.map((section, i) => (
+                    <section
+                        key={i}
+                        data-reveal
+                        className="grid gap-6 border-t border-border py-16 lg:grid-cols-12 lg:gap-10 lg:py-24"
                     >
-                        <img
-                            src="/mizuan-image.png"
-                            alt=""
-                            className="size-full object-cover grayscale"
-                        />
-                        <div className="absolute inset-0 bg-background/55" />
-                        <div className="absolute inset-0 bg-linear-to-t from-background via-background/40 to-transparent" />
-                    </div>
+                        <div className="flex items-center gap-4 lg:col-span-3 lg:flex-col lg:items-start lg:gap-3">
+                            <span className="font-display text-xs font-medium text-brand tabular-nums">
+                                {pad(i + 1)}
+                            </span>
+                            <span className="font-display text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
+                                {section.label}
+                            </span>
+                        </div>
 
-                    <div className="flex items-center justify-between font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                        <span className="tabular-nums">
-                            0{active + 1} / 0{total}
-                        </span>
-                        <span>{section.label}</span>
-                    </div>
+                        <div className="lg:col-span-9">
+                            <h2 className="font-display text-[clamp(2rem,5.5vw,3.75rem)] leading-[0.95] font-semibold tracking-[-0.03em] uppercase">
+                                {section.title}
+                            </h2>
 
-                    <div
-                        key={active}
-                        className="mt-auto animate-in fade-in slide-in-from-bottom-3 duration-500"
-                    >
-                        <SplitHeadline
-                            key={active}
-                            text={section.title}
-                            className="font-display text-[clamp(2.5rem,7vw,5rem)] leading-[0.95] font-semibold tracking-[-0.03em] uppercase"
-                        />
+                            {section.body && (
+                                <div className="mt-6 max-w-2xl space-y-5 text-lg leading-relaxed text-muted-foreground">
+                                    {section.body
+                                        .split(/\n\n+/)
+                                        .filter(Boolean)
+                                        .map((paragraph, p) => (
+                                            <p key={p}>{paragraph}</p>
+                                        ))}
+                                </div>
+                            )}
 
-                        {section.body && (
-                            <div className="mt-6 max-w-md space-y-4 text-base leading-relaxed text-muted-foreground">
-                                {section.body
-                                    .split(/\n\n+/)
-                                    .filter(Boolean)
-                                    .map((paragraph, i) => (
-                                        <p key={i}>{paragraph}</p>
+                            {section.tags.length > 0 && (
+                                <div className="mt-8 flex flex-wrap gap-2">
+                                    {section.tags.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="rounded-full border border-border px-3.5 py-1.5 font-display text-xs font-medium tracking-wide transition-colors hover:border-brand hover:text-brand"
+                                        >
+                                            {tag}
+                                        </span>
                                     ))}
-                            </div>
-                        )}
-
-                        {section.tags.length > 0 && (
-                            <div className="mt-6 flex max-w-lg flex-wrap gap-2">
-                                {section.tags.map((tag) => (
-                                    <span
-                                        key={tag}
-                                        className="rounded-full border px-3 py-1.5 font-display text-xs font-medium tracking-wide"
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </main>
-
-            {/* Section pager + quick contact */}
-            <div className="pointer-events-none fixed inset-x-0 bottom-6 z-40 flex justify-center gap-2 px-4">
-                <div className="pointer-events-auto flex items-center gap-3 rounded-full border bg-background/80 px-3 py-2 backdrop-blur">
-                    <button
-                        type="button"
-                        onClick={() => go(-1)}
-                        aria-label="Previous section"
-                        className="rounded-full p-1.5 text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                        <ArrowLeft className="size-4" />
-                    </button>
-                    <span className="min-w-24 text-center font-display text-xs font-medium tracking-[0.14em] text-foreground uppercase sm:min-w-28">
-                        {section.label}
-                    </span>
-                    <button
-                        type="button"
-                        onClick={() => go(1)}
-                        aria-label="Next section"
-                        className="rounded-full p-1.5 text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                        <ArrowRight className="size-4" />
-                    </button>
-                </div>
-
-                <a
-                    href="mailto:mizuan.mohamed@gmail.com"
-                    aria-label="Email"
-                    className="pointer-events-auto rounded-full border bg-background/80 p-3 text-muted-foreground backdrop-blur transition-colors hover:text-foreground"
-                >
-                    <Mail className="size-4" />
-                </a>
-                <a
-                    href="https://www.linkedin.com/in/mizuanmohamed/"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="LinkedIn"
-                    className="pointer-events-auto rounded-full border bg-background/80 p-3 text-muted-foreground backdrop-blur transition-colors hover:text-foreground"
-                >
-                    <LinkedinIcon className="size-4" />
-                </a>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                ))}
             </div>
 
-            {/* Live clock, bottom-right for chrome continuity */}
-            <LocalClock className="pointer-events-none fixed right-6 bottom-8 z-40 hidden font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground tabular-nums uppercase lg:block" />
+            <SiteFooter />
         </div>
     );
 }

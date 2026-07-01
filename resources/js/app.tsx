@@ -17,6 +17,7 @@ createInertiaApp({
             // their own chrome, so they opt out of the shared site layout.
             case name === 'site/home':
             case name === 'site/about':
+            case name === 'site/contact':
             case name === 'site/projects/index':
                 return null;
             case name.startsWith('site/'):
