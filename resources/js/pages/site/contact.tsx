@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { LocalClock } from '@/components/site/local-clock';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteNav } from '@/components/site/site-nav';
+import { SplitText } from '@/components/site/split-text';
 import { cn } from '@/lib/utils';
 
 const EMAIL = 'mizuan.mohamed@gmail.com';
@@ -33,6 +34,18 @@ export default function Contact({
         }
 
         const ctx = gsap.context(() => {
+            gsap.fromTo(
+                '.contact-fade',
+                { opacity: 0, y: 16 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.7,
+                    ease: 'power3.out',
+                    stagger: 0.09,
+                    delay: 0.2,
+                },
+            );
             gsap.fromTo(
                 '[data-glow]',
                 { scale: 0.94, opacity: 0.6 },
@@ -87,24 +100,27 @@ export default function Contact({
             />
 
             <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6 py-32 lg:px-8">
-                <p className="flex items-center gap-2 font-display text-xs font-medium tracking-[0.24em] text-brand uppercase">
+                <p className="contact-fade flex items-center gap-2 font-display text-xs font-medium tracking-[0.24em] text-brand uppercase">
                     <Globe className="size-3.5" strokeWidth={1.5} />
                     Contact — Available for work
                 </p>
 
-                <h1 className="mt-6 font-display text-[clamp(3rem,13vw,10rem)] leading-[0.84] font-bold tracking-[-0.03em] text-brand uppercase">
-                    Let&apos;s
-                    <br />
-                    talk
-                </h1>
+                <SplitText
+                    as="h1"
+                    text={"Let's\ntalk"}
+                    delay={0.25}
+                    stagger={0.05}
+                    duration={0.8}
+                    className="mt-6 font-poster text-[clamp(3.5rem,14vw,11rem)] leading-[0.9] font-normal tracking-[-0.01em] text-brand uppercase"
+                />
 
                 <div className="mt-12 flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
-                    <div>
+                    <div className="contact-fade min-w-0">
                         {/* Click-to-copy email */}
                         <button
                             type="button"
                             onClick={copyEmail}
-                            className="group inline-flex items-center gap-3 font-display text-[clamp(1.25rem,3.5vw,2.25rem)] font-semibold tracking-[-0.02em] transition-colors hover:text-brand"
+                            className="group inline-flex max-w-full flex-wrap items-center gap-3 text-left font-display text-[clamp(1.15rem,3.5vw,2.25rem)] font-semibold tracking-[-0.02em] break-all transition-colors hover:text-brand"
                         >
                             {EMAIL}
                             <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors group-hover:border-brand group-hover:text-brand">
@@ -144,12 +160,12 @@ export default function Contact({
                     </div>
 
                     {/* Rotating availability badge */}
-                    <RotatingBadge className="self-start lg:self-end" />
+                    <RotatingBadge className="contact-fade self-start lg:self-end" />
                 </div>
             </main>
 
             {/* Chrome: location + live clock */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 mx-auto flex w-full max-w-7xl items-end justify-between gap-4 px-6 pb-8 font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase lg:px-8">
+            <div className="contact-fade pointer-events-none absolute inset-x-0 bottom-0 mx-auto flex w-full max-w-7xl items-end justify-between gap-4 px-6 pb-8 font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase lg:px-8">
                 <span>Malé, Maldives</span>
                 <LocalClock className="tabular-nums" />
             </div>

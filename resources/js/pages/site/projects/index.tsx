@@ -6,6 +6,7 @@ import type { ProjectListItem } from '@/components/site/project-list';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteNav } from '@/components/site/site-nav';
+import { SplitText } from '@/components/site/split-text';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -62,12 +63,14 @@ export default function ProjectsIndex({ projects }: Props) {
                 >
                     Selected Work
                 </p>
-                <h1
-                    data-reveal
-                    className="mt-5 font-display text-[clamp(3rem,13vw,10rem)] leading-[0.86] font-bold tracking-[-0.03em] uppercase"
-                >
-                    Work
-                </h1>
+                <SplitText
+                    as="h1"
+                    text="Work"
+                    delay={0.15}
+                    stagger={0.05}
+                    duration={0.8}
+                    className="mt-5 font-poster text-[clamp(3.5rem,14vw,11rem)] leading-[0.9] font-normal tracking-[-0.01em] text-brand uppercase"
+                />
                 <p
                     data-reveal
                     className="mt-8 max-w-xl text-sm leading-relaxed text-muted-foreground"

@@ -1,28 +1,20 @@
-import { Mail } from 'lucide-react';
-import {
-    GithubIcon,
-    LinkedinIcon,
-    XIcon,
-} from '@/components/site/social-icons';
-
-export const socials = [
-    { label: 'GitHub', href: 'https://github.com/Mizuan', Icon: GithubIcon },
-    {
-        label: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/mizuanmohamed/',
-        Icon: LinkedinIcon,
-    },
-    { label: 'X', href: 'https://x.com/mizuanmohamed', Icon: XIcon },
-    { label: 'Email', href: 'mailto:mizuan.mohamed@gmail.com', Icon: Mail },
+const socials = [
+    { label: 'GitHub', href: 'https://github.com/Mizuan' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/mizuanmohamed/' },
+    { label: 'X', href: 'https://x.com/mizuanmohamed' },
+    { label: 'Email', href: 'mailto:mizuan.mohamed@gmail.com' },
 ];
 
 export function SiteFooter() {
     return (
         <footer className="border-t">
-            <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:px-8">
-                <p>&copy; {new Date().getFullYear()} Mizuan Mohamed.</p>
-                <div className="flex items-center gap-5">
-                    {socials.map(({ label, href, Icon }) => (
+            <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 py-8 font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase sm:flex-row sm:items-center sm:justify-between lg:px-8">
+                <p>
+                    &copy; {new Date().getFullYear()} Mizuan Mohamed — Malé,
+                    Maldives
+                </p>
+                <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
+                    {socials.map(({ label, href }) => (
                         <a
                             key={label}
                             href={href}
@@ -30,10 +22,9 @@ export function SiteFooter() {
                             rel={
                                 href.startsWith('http') ? 'noreferrer' : undefined
                             }
-                            aria-label={label}
-                            className="transition-colors hover:text-foreground"
+                            className="transition-colors hover:text-brand"
                         >
-                            <Icon className="size-5" />
+                            {label}
                         </a>
                     ))}
                 </div>

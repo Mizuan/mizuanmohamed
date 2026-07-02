@@ -68,10 +68,10 @@ export function SiteNav() {
                     </SheetTrigger>
                     <SheetContent
                         side="left"
-                        className="dark w-24 border-r bg-background p-0 text-foreground lg:w-20"
+                        className="dark w-24 border-r bg-background p-0 text-foreground lg:w-16 2xl:w-20"
                     >
                         <SheetTitle className="sr-only">Menu</SheetTitle>
-                        <nav className="flex h-full flex-col items-center justify-center gap-3 py-16">
+                        <nav className="flex h-full flex-col items-stretch justify-center gap-2 py-16">
                             {navLinks.map((link) => {
                                 const active = isActive(link.href);
 
@@ -82,13 +82,15 @@ export function SiteNav() {
                                         onClick={() => setOpen(false)}
                                         aria-current={active ? 'page' : undefined}
                                         className={cn(
-                                            'rotate-180 font-display text-sm font-semibold tracking-[0.16em] uppercase transition-colors [writing-mode:vertical-rl]',
+                                            'flex w-full items-center justify-center font-poster text-sm tracking-[0.14em] uppercase transition-colors',
                                             active
-                                                ? 'bg-brand px-2 py-5 text-white'
-                                                : 'px-2 py-3 text-foreground/55 hover:text-foreground',
+                                                ? 'bg-brand py-5 text-white'
+                                                : 'py-3 text-foreground/55 hover:text-foreground',
                                         )}
                                     >
-                                        {link.label}
+                                        <span className="rotate-180 [writing-mode:vertical-rl]">
+                                            {link.label}
+                                        </span>
                                     </Link>
                                 );
                             })}
@@ -98,7 +100,7 @@ export function SiteNav() {
 
                 <Link
                     href={home()}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-medium tracking-[0.14em] whitespace-nowrap transition-opacity hover:opacity-70 lg:text-sm"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-poster text-sm font-normal tracking-[0.18em] whitespace-nowrap transition-opacity hover:opacity-70 lg:text-base"
                 >
                     <SplitText
                         text="Mizuan Mohamed"

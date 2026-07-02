@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 const GRAIN =
     "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
-/**
+/**le
  * The home hero: a warm "doorway of light" receding into near-black under film
  * grain and a vignette, with the role headline bleeding off the base. The light
  * slowly breathes and drifts; honours reduced-motion by rendering it static.
@@ -166,7 +166,7 @@ export function Hero() {
                         delay={0.4}
                         stagger={0.04}
                         duration={0.85}
-                        className="font-display text-[clamp(2.75rem,11vw,9rem)] leading-[0.86] font-bold tracking-[-0.03em] text-brand uppercase"
+                        className="font-poster text-[clamp(3rem,12.5vw,10.5rem)] leading-[0.9] font-normal tracking-[-0.01em] text-brand uppercase"
                     />
                 </div>
             </div>
@@ -178,16 +178,17 @@ export function Hero() {
                 style={{ backgroundImage: GRAIN }}
             />
 
-            {/* Status bar: availability · contact · live clock */}
-            <div className="hero-fade pointer-events-none absolute inset-x-0 bottom-0 z-20 mx-auto flex w-full max-w-7xl items-end justify-between gap-4 px-6 pb-8 font-display text-[11px] font-medium tracking-[0.14em] text-white/70 uppercase lg:px-8">
-                <span>Available for work</span>
+            {/* Status bar: availability · contact · live clock. Scrolls
+                horizontally if a tiny screen can't fit all three. */}
+            <div className="hero-fade absolute inset-x-0 bottom-0 z-20 mx-auto flex w-full max-w-7xl items-end justify-between gap-6 overflow-x-auto px-6 pb-8 font-display text-[11px] font-medium tracking-[0.14em] whitespace-nowrap text-white/70 uppercase [scrollbar-width:none] lg:px-8 [&::-webkit-scrollbar]:hidden">
+                <span className="shrink-0">Available for work</span>
                 <a
                     href="mailto:mizuan.mohamed@gmail.com"
-                    className="pointer-events-auto transition-colors hover:text-white"
+                    className="shrink-0 transition-colors hover:text-white"
                 >
                     Contact
                 </a>
-                <LocalClock className="tabular-nums" />
+                <LocalClock className="shrink-0 tabular-nums" />
             </div>
         </section>
     );

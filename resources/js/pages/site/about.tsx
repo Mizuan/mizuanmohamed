@@ -2,7 +2,6 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Globe } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { HumanSilhouette } from '@/components/site/human-silhouette';
 import { SeoHead } from '@/components/site/seo-head';
 import { SiteFooter } from '@/components/site/site-footer';
 import { SiteNav } from '@/components/site/site-nav';
@@ -73,6 +72,7 @@ export default function About({
 }) {
     const sections =
         configured && configured.length > 0 ? configured : DEFAULT_SECTIONS;
+    const [intro, ...rest] = sections;
     const root = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -135,18 +135,15 @@ export default function About({
                     }}
                 />
 
-                <p className="absolute top-24 left-1/2 flex -translate-x-1/2 items-center gap-2 font-display text-xs font-medium tracking-[0.22em] text-white/60 uppercase">
+                <SplitHeadline
+                    text="About"
+                    className="font-poster text-[clamp(5rem,29vw,22rem)] leading-none font-normal tracking-[-0.015em] text-brand uppercase"
+                />
+
+                <p className="mt-6 flex items-center gap-2 font-display text-xs font-medium tracking-[0.22em] text-white/60 uppercase">
                     <Globe className="size-3.5" strokeWidth={1.5} />
                     Malé, Maldives — Full-Stack Developer
                 </p>
-
-                <div className="relative">
-                    <SplitHeadline
-                        text="About"
-                        className="font-display text-[clamp(4.5rem,27vw,20rem)] leading-none font-bold tracking-[-0.04em] text-brand uppercase"
-                    />
-                    <HumanSilhouette className="absolute bottom-0 left-1/2 z-20 h-[62%] -translate-x-1/2 translate-y-[14%]" />
-                </div>
 
                 <div
                     aria-hidden
@@ -162,9 +159,90 @@ export default function About({
                 </span>
             </section>
 
-            {/* ── Editable sections as cinematic editorial blocks ── */}
+            {/* ── Intro: portrait spanning a red glow field ──────── */}
+            {intro && (
+                <section className="relative isolate flex min-h-svh flex-col overflow-hidden bg-[#0a0506]">
+
+                    {/* Film grain */}
+                    <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 z-10 opacity-[0.13] mix-blend-overlay"
+                        style={{ backgroundImage: GRAIN }}
+                    />
+
+                    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 pt-28 pb-14 lg:px-8 lg:pt-32">
+                        <div className="flex items-center gap-4">
+                            <span className="font-display text-xs font-medium text-brand tabular-nums">
+                                01
+                            </span>
+                            <span className="font-display text-xs font-medium tracking-[0.18em] text-white/70 uppercase">
+                                {intro.label}
+                            </span>
+                        </div>
+
+                        {/* Portrait — B&W cutout backlit by a red glow, edges
+                            masked into the dark. In flow above the text on
+                            mobile; pinned to the right on lg. */}
+                        <div className="pointer-events-none relative -mx-6 mt-auto h-[62svh] w-svw max-w-none self-center lg:absolute lg:inset-x-0 lg:right-[6%] lg:bottom-0 lg:left-auto lg:-z-10 lg:mx-auto lg:h-full lg:w-auto">
+                            <div
+                                data-glow
+                                aria-hidden
+                                className="absolute top-[58%] left-1/2 -z-10 h-[75%] w-[120%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px]"
+                                style={{
+                                    background:
+                                        'radial-gradient(ellipse at center, rgba(255,72,44,0.5), rgba(190,30,16,0.22) 48%, transparent 75%)',
+                                }}
+                            />
+                            <img
+                                src="/mizuan-image-new.png"
+                                alt="Mizuan Mohamed"
+                                loading="lazy"
+                                className="h-full w-full object-cover object-bottom lg:w-auto lg:object-contain"
+                                style={{
+                                    filter: 'grayscale(1) contrast(1.08) drop-shadow(0 0 50px rgba(255,72,44,0.22))',
+                                    maskImage:
+                                        'linear-gradient(to top, transparent 0%, black 16%), linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+                                    maskComposite: 'intersect',
+                                    WebkitMaskComposite: 'source-in',
+                                }}
+                            />
+                        </div>
+
+                        <div
+                            data-reveal
+                            className="max-w-xl pt-10 lg:my-auto lg:pt-0"
+                        >
+                            {intro.body && (
+                                <div className="space-y-5 text-lg leading-relaxed text-white/85">
+                                    {intro.body
+                                        .split(/\n\n+/)
+                                        .filter(Boolean)
+                                        .map((paragraph, p) => (
+                                            <p key={p}>{paragraph}</p>
+                                        ))}
+                                </div>
+                            )}
+
+                            {intro.tags.length > 0 && (
+                                <div className="mt-8 flex flex-wrap gap-2">
+                                    {intro.tags.map((tag) => (
+                                        <span
+                                            key={tag}
+                                            className="rounded-full border border-white/25 px-3.5 py-1.5 font-display text-xs font-medium tracking-wide text-white/85"
+                                        >
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ── Remaining sections as editorial blocks ─────────── */}
             <div className="mx-auto w-full max-w-6xl px-6 pb-32 lg:px-8 lg:pb-48">
-                {sections.map((section, i) => (
+                {rest.map((section, i) => (
                     <section
                         key={i}
                         data-reveal
@@ -172,7 +250,7 @@ export default function About({
                     >
                         <div className="flex items-center gap-4 lg:col-span-3 lg:flex-col lg:items-start lg:gap-3">
                             <span className="font-display text-xs font-medium text-brand tabular-nums">
-                                {pad(i + 1)}
+                                {pad(i + 2)}
                             </span>
                             <span className="font-display text-xs font-medium tracking-[0.18em] text-muted-foreground uppercase">
                                 {section.label}
@@ -180,7 +258,7 @@ export default function About({
                         </div>
 
                         <div className="lg:col-span-9">
-                            <h2 className="font-display text-[clamp(2rem,5.5vw,3.75rem)] leading-[0.95] font-semibold tracking-[-0.03em] uppercase">
+                            <h2 className="font-poster text-[clamp(2rem,5.5vw,3.75rem)] leading-[0.95] font-normal tracking-[-0.01em] uppercase">
                                 {section.title}
                             </h2>
 

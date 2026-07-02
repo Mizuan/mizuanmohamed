@@ -89,7 +89,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
             <section className="mx-auto max-w-6xl px-6 py-28 lg:px-8 lg:py-40">
                 <p
                     data-reveal
-                    className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase"
+                    className="font-display text-xs font-medium tracking-[0.24em] text-brand uppercase"
                 >
                     The approach
                 </p>
@@ -105,7 +105,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                     user experience.
                 </p>
 
-                <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border bg-border sm:grid-cols-3">
+                <div className="mt-20 grid gap-x-10 sm:grid-cols-3">
                     {[
                         { value: '9+', label: 'Years building for the web' },
                         { value: 'Team', label: 'Leading delivery at a gov SOE' },
@@ -114,12 +114,12 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                         <div
                             key={stat.label}
                             data-reveal
-                            className="bg-background p-8"
+                            className="border-t border-border pt-6 pb-8 sm:pb-0"
                         >
-                            <p className="font-display text-3xl font-medium tracking-tight sm:text-4xl">
+                            <p className="font-poster text-5xl text-brand uppercase sm:text-6xl">
                                 {stat.value}
                             </p>
-                            <p className="mt-2 text-sm text-muted-foreground">
+                            <p className="mt-3 font-display text-[11px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
                                 {stat.label}
                             </p>
                         </div>
@@ -134,7 +134,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                         data-reveal
                         className="mb-12 flex flex-wrap items-end justify-between gap-4"
                     >
-                        <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-medium tracking-[-0.02em]">
+                        <h2 className="font-display text-[clamp(1.75rem,4.5vw,3rem)] font-semibold tracking-[-0.02em] uppercase">
                             Selected work
                         </h2>
                         <Link
@@ -160,7 +160,7 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
                             data-reveal
                             className="mb-12 flex flex-wrap items-end justify-between gap-4"
                         >
-                            <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-medium tracking-[-0.02em]">
+                            <h2 className="font-display text-[clamp(1.75rem,4.5vw,3rem)] font-semibold tracking-[-0.02em] uppercase">
                                 Latest writing
                             </h2>
                             <Link
@@ -210,17 +210,25 @@ export default function Home({ latestArticles, featuredProjects }: Props) {
             )}
 
             {/* ── Contact CTA ────────────────────────────────────── */}
-            <section className="border-t">
+            <section className="relative isolate overflow-hidden border-t">
+                <div
+                    aria-hidden
+                    className="absolute bottom-[-40%] left-1/2 -z-10 h-[80%] w-[110%] -translate-x-1/2 blur-[110px]"
+                    style={{
+                        background:
+                            'radial-gradient(ellipse at center bottom, rgba(255,72,44,0.28), rgba(206,26,16,0.12) 46%, transparent 72%)',
+                    }}
+                />
                 <div className="mx-auto max-w-6xl px-6 py-28 text-center lg:px-8 lg:py-40">
                     <p
                         data-reveal
-                        className="text-xs font-medium tracking-[0.2em] text-muted-foreground uppercase"
+                        className="font-display text-xs font-medium tracking-[0.24em] text-brand uppercase"
                     >
                         Let&apos;s build something
                     </p>
                     <h2
                         data-reveal
-                        className="mx-auto mt-6 max-w-3xl font-display text-[clamp(2.25rem,7vw,5rem)] leading-[0.98] font-medium tracking-[-0.03em]"
+                        className="mx-auto mt-6 max-w-4xl font-poster text-[clamp(2.5rem,8.5vw,6.5rem)] leading-[0.95] font-normal tracking-[-0.01em] uppercase"
                     >
                         Have a project in mind?
                     </h2>
