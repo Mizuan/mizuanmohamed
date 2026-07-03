@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Seed Password
+    |--------------------------------------------------------------------------
+    |
+    | Read through config (not env()) so AdminSeeder keeps working when the
+    | configuration is cached in production and .env is never loaded.
+    |
+    */
+
+    'admin_password' => env('ADMIN_PASSWORD'),
+
 ];

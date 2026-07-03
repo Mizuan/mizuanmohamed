@@ -17,7 +17,7 @@ type Section = {
     label: string;
     title: string;
     body: string;
-    tags: string[];
+    tags?: string[] | null;
 };
 
 // Used when the about page has no sections configured in the admin yet.
@@ -223,9 +223,9 @@ export default function About({
                                 </div>
                             )}
 
-                            {intro.tags.length > 0 && (
+                            {(intro.tags ?? []).length > 0 && (
                                 <div className="mt-8 flex flex-wrap gap-2">
-                                    {intro.tags.map((tag) => (
+                                    {(intro.tags ?? []).map((tag) => (
                                         <span
                                             key={tag}
                                             className="rounded-full border border-white/25 px-3.5 py-1.5 font-display text-xs font-medium tracking-wide text-white/85"
@@ -273,9 +273,9 @@ export default function About({
                                 </div>
                             )}
 
-                            {section.tags.length > 0 && (
+                            {(section.tags ?? []).length > 0 && (
                                 <div className="mt-8 flex flex-wrap gap-2">
-                                    {section.tags.map((tag) => (
+                                    {(section.tags ?? []).map((tag) => (
                                         <span
                                             key={tag}
                                             className="rounded-full border border-border px-3.5 py-1.5 font-display text-xs font-medium tracking-wide transition-colors hover:border-brand hover:text-brand"

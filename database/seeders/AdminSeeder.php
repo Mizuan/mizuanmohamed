@@ -14,7 +14,7 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $password = env('ADMIN_PASSWORD');
+        $password = config('app.admin_password');
 
         if (blank($password)) {
             throw new RuntimeException('Set ADMIN_PASSWORD in .env before seeding the admin user.');
