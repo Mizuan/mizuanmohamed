@@ -19,6 +19,7 @@ createInertiaApp({
             case name === 'site/about':
             case name === 'site/contact':
             case name === 'site/projects/index':
+            case name === 'site/articles/index':
                 return null;
             case name.startsWith('site/'):
                 return SiteLayout;
