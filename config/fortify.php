@@ -93,6 +93,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Passkeys (WebAuthn)
+    |--------------------------------------------------------------------------
+    |
+    | Fortify seeds the laravel/passkeys config from these values. Auth runs on
+    | the admin subdomain, so that origin must be allowed alongside the root
+    | site; the relying-party ID is the root host so a passkey stays valid
+    | across subdomains. The user-handle secret is pinned independently of
+    | APP_KEY so rotating the app key never invalidates existing passkeys.
+    |
+    */
+
+    'passkeys' => [
+        'relying_party_id' => env('PASSKEYS_RP_ID')
+            ?: parse_url((string) env('APP_URL'), PHP_URL_HOST),
+
+        'allowed_origins' => array_values(array_filter([
+            env('APP_URL'),
+            env('ADMIN_DOMAIN') ? 'https://'.env('ADMIN_DOMAIN') : null,
+        ])),
+
+        'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET')
+            ?: env('APP_KEY'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Fortify Routes Middleware
     |--------------------------------------------------------------------------
     |
