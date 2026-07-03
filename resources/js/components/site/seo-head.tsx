@@ -7,6 +7,8 @@ type SeoHeadProps = {
     type?: 'website' | 'article';
     publishedAt?: string | null;
     canonical?: string;
+    /** Optional schema.org structured data, rendered as JSON-LD. */
+    jsonLd?: Record<string, unknown>;
 };
 
 type SiteShared = {
@@ -24,6 +26,7 @@ export function SeoHead({
     type = 'website',
     publishedAt,
     canonical,
+    jsonLd,
 }: SeoHeadProps) {
     const page = usePage<SiteShared>();
     const siteName = page.props.name;
@@ -58,6 +61,12 @@ export function SeoHead({
             <meta name="twitter:title" content={title} />
             <meta name="twitter:description" content={desc} />
             <meta name="twitter:image" content={og} />
+
+            {jsonLd && (
+                <script type="application/ld+json">
+                    {JSON.stringify(jsonLd)}
+                </script>
+            )}
         </Head>
     );
 }

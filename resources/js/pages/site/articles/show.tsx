@@ -35,6 +35,20 @@ export default function ArticleShow({ article }: Props) {
                 image={featuredImageUrl ?? undefined}
                 type="article"
                 publishedAt={article.published_at}
+                jsonLd={{
+                    '@context': 'https://schema.org',
+                    '@type': 'BlogPosting',
+                    headline: article.title,
+                    ...(article.excerpt && { description: article.excerpt }),
+                    ...(article.published_at && {
+                        datePublished: article.published_at,
+                    }),
+                    ...(featuredImageUrl && { image: featuredImageUrl }),
+                    author: {
+                        '@type': 'Person',
+                        name: article.author?.name ?? 'Mizuan Mohamed',
+                    },
+                }}
             />
 
             <article className="pb-16">

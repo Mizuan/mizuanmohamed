@@ -6,11 +6,13 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\Site\ArticleController as SiteArticleController;
 use App\Http\Controllers\Site\HomeController;
 use App\Http\Controllers\Site\PageController as SitePageController;
 use App\Http\Controllers\Site\ProjectController as SiteProjectController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Middleware\PreventIndexing;
 use Illuminate\Support\Facades\Route;
 
 $adminDomain = config('fortify.domain');
@@ -34,34 +36,40 @@ Route::name('site.')->group(function () {
 });
 
 Route::get('sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('robots.txt', RobotsController::class)->name('robots');
 
 // Admin — when ADMIN_DOMAIN is configured, the dashboard, admin panel, and
 // settings are only reachable on that subdomain (Fortify scopes the auth
 // routes to it too, via the same config value). With no domain configured
 // (tests, fresh local setups) everything stays on the main host.
-Route::group($adminDomain ? ['domain' => $adminDomain] : [], function () {
-    Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-        Route::get('dashboard', DashboardController::class)->name('dashboard');
-    });
-
-    Route::middleware(['auth', 'verified', 'admin'])
-        ->prefix('admin')
-        ->name('admin.')
-        ->group(function () {
-            // Categories, tags and projects are managed via dialog modals on
-            // the index page, so they don't need create/edit screens.
-            Route::resource('categories', CategoryController::class)
-                ->except(['show', 'create', 'edit']);
-            Route::resource('tags', TagController::class)
-                ->except(['show', 'create', 'edit']);
-            Route::resource('projects', ProjectController::class)
-                ->except(['show', 'create', 'edit']);
-            Route::resource('articles', ArticleController::class)->except('show');
-            Route::resource('pages', PageController::class)->except('show');
+Route::group(
+    array_filter([
+        'domain' => $adminDomain ?: null,
+        'middleware' => [PreventIndexing::class],
+    ]),
+    function () {
+        Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+            Route::get('dashboard', DashboardController::class)->name('dashboard');
         });
 
-    require __DIR__.'/settings.php';
-});
+        Route::middleware(['auth', 'verified', 'admin'])
+            ->prefix('admin')
+            ->name('admin.')
+            ->group(function () {
+                // Categories, tags and projects are managed via dialog modals on
+                // the index page, so they don't need create/edit screens.
+                Route::resource('categories', CategoryController::class)
+                    ->except(['show', 'create', 'edit']);
+                Route::resource('tags', TagController::class)
+                    ->except(['show', 'create', 'edit']);
+                Route::resource('projects', ProjectController::class)
+                    ->except(['show', 'create', 'edit']);
+                Route::resource('articles', ArticleController::class)->except('show');
+                Route::resource('pages', PageController::class)->except('show');
+            });
+
+        require __DIR__.'/settings.php';
+    });
 
 // Catch-all for dynamic pages (about, contact, etc.) — must be last so explicit
 // routes win. Slug constraint excludes paths containing dots so /sitemap.xml

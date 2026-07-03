@@ -4,6 +4,46 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        {{-- Server-rendered SEO fallbacks: crawlers that don't execute JS see
+             these; Inertia's <Head> augments/overrides them client-side. --}}
+        <meta name="description" content="Full-stack developer based in Malé, Maldives. Selected work, writing, and notes on building for the web with Laravel, React, and TypeScript.">
+        <meta name="author" content="Mizuan Mohamed">
+        <meta name="theme-color" content="#0a0506">
+        <meta name="color-scheme" content="dark light">
+        <meta property="og:site_name" content="{{ config('app.name', 'Mizuan Mohamed') }}">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Mizuan Mohamed — Full-Stack Developer">
+        <meta property="og:description" content="Full-stack developer based in Malé, Maldives. Selected work, writing, and notes on building for the web.">
+        <meta property="og:url" content="{{ config('app.url') }}">
+        <meta property="og:image" content="{{ config('app.url') }}/favicon-512x512.png">
+
+        <script type="application/ld+json">
+            {!! json_encode([
+                '@context' => 'https://schema.org',
+                '@graph' => [
+                    [
+                        '@type' => 'Person',
+                        '@id' => config('app.url').'#person',
+                        'name' => 'Mizuan Mohamed',
+                        'url' => config('app.url'),
+                        'jobTitle' => 'Full-Stack Developer',
+                        'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Malé', 'addressCountry' => 'MV'],
+                        'sameAs' => [
+                            'https://github.com/Mizuan',
+                            'https://www.linkedin.com/in/mizuanmohamed/',
+                            'https://x.com/mizuanmohamed',
+                        ],
+                    ],
+                    [
+                        '@type' => 'WebSite',
+                        'url' => config('app.url'),
+                        'name' => config('app.name', 'Mizuan Mohamed'),
+                        'publisher' => ['@id' => config('app.url').'#person'],
+                    ],
+                ],
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+        </script>
+
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
