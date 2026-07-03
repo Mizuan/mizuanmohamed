@@ -68,7 +68,7 @@ export function SiteNav() {
                     </SheetTrigger>
                     <SheetContent
                         side="left"
-                        className="dark w-24 border-r bg-background p-0 text-foreground lg:w-16 2xl:w-20"
+                        className="dark w-16 border-r bg-background p-0 text-foreground lg:w-16 2xl:w-20"
                     >
                         <SheetTitle className="sr-only">Menu</SheetTitle>
                         <nav className="flex h-full flex-col items-stretch justify-center gap-2 py-16">

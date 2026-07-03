@@ -128,10 +128,10 @@ export default function About({
                 <div
                     data-glow
                     aria-hidden
-                    className="absolute top-1/2 left-1/2 -z-10 h-[52%] w-[52%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[90px]"
+                    className="absolute top-1/2 left-1/2 -z-10 h-[60%] w-[60%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[110px]"
                     style={{
                         background:
-                            'radial-gradient(circle at center, rgba(255,72,44,0.55), rgba(206,26,16,0.25) 46%, transparent 72%)',
+                            'radial-gradient(circle at center, rgba(255,72,44,0.42), rgba(206,26,16,0.18) 46%, transparent 72%)',
                     }}
                 />
 
