@@ -20,14 +20,13 @@ class AdminSeeder extends Seeder
             throw new RuntimeException('Set ADMIN_PASSWORD in .env before seeding the admin user.');
         }
 
-        User::updateOrCreate(
-            ['email' => 'admin@mizuan.dev'],
-            [
-                'name' => 'Mizuan Mohamed',
-                'password' => Hash::make($password),
-                'is_admin' => true,
-                'email_verified_at' => now(),
-            ],
-        );
+        $user = User::firstOrNew(['email' => 'admin@mizuan.dev']);
+
+        $user->forceFill([
+            'name' => 'Mizuan Mohamed',
+            'password' => Hash::make($password),
+            'is_admin' => true,
+            'email_verified_at' => now(),
+        ])->save();
     }
 }
