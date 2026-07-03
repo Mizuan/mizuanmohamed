@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
+import PasskeyManager from '@/components/passkey-manager';
 import PasswordInput from '@/components/password-input';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
@@ -13,14 +14,26 @@ import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import { edit } from '@/routes/security';
 import { disable, enable } from '@/routes/two-factor';
 
+type Passkey = {
+    id: string;
+    name: string;
+    authenticator: string | null;
+    last_used_at: string | null;
+    created_at: string | null;
+};
+
 type Props = {
     canManageTwoFactor?: boolean;
+    canManagePasskeys?: boolean;
+    passkeys?: Passkey[];
     requiresConfirmation?: boolean;
     twoFactorEnabled?: boolean;
 };
 
 export default function Security({
     canManageTwoFactor = false,
+    canManagePasskeys = false,
+    passkeys = [],
     requiresConfirmation = false,
     twoFactorEnabled = false,
 }: Props) {
@@ -235,6 +248,8 @@ export default function Security({
                     />
                 </div>
             )}
+
+            {canManagePasskeys && <PasskeyManager passkeys={passkeys} />}
         </>
     );
 }

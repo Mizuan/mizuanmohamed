@@ -152,6 +152,11 @@ return [
             'confirmPassword' => true,
             // 'window' => 0
         ]),
+        Features::passkeys([
+            // Registering or removing a passkey requires a fresh password
+            // confirmation — same posture as two-factor management.
+            'confirmPassword' => true,
+        ]),
     ],
 
 ];
