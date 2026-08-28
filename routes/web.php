@@ -47,7 +47,6 @@ Route::group(
             ->get('dashboard', fn () => redirect('/admin'))
             ->name('dashboard');
 
-        require __DIR__.'/settings.php';
     });
 
 // Catch-all for dynamic pages (about, contact, etc.) — must be last so explicit

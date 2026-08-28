@@ -64,10 +64,11 @@
             </script>
         @endunless
 
-        {{-- Matches --background in app.css so the first paint has no flash --}}
+        {{-- Matches the first-paint background: warm paper on the public site,
+             neutral white on the admin surface --}}
         <style>
             html {
-                background-color: oklch(0.977 0.008 85);
+                background-color: {{ $isPublicSite ? 'oklch(0.977 0.008 85)' : 'oklch(1 0 0)' }};
             }
 
             html.dark {

@@ -33,6 +33,27 @@ it('updates name and email', function (): void {
     expect($this->user->email)->toBe('new@example.com');
 });
 
+it('clears email verification when the email changes', function (): void {
+    livewire(Profile::class)
+        ->fillForm(['name' => $this->user->name, 'email' => 'changed@example.com'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($this->user->refresh()->email_verified_at)->toBeNull();
+});
+
+it('keeps email verification when the email is unchanged', function (): void {
+    $verifiedAt = $this->user->email_verified_at;
+
+    livewire(Profile::class)
+        ->fillForm(['name' => 'Renamed Only', 'email' => $this->user->email])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($this->user->refresh()->email_verified_at)->not->toBeNull()
+        ->and($this->user->email_verified_at->equalTo($verifiedAt))->toBeTrue();
+});
+
 it('rejects an email already taken by another user', function (): void {
     $other = User::factory()->create();
 

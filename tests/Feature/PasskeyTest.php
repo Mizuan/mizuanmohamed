@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\Security;
 use App\Models\User;
 
 it('serves passkey login options to guests', function (): void {
@@ -13,17 +14,19 @@ it('requires authentication to fetch passkey registration options', function ():
         ->assertRedirect(route('login'));
 });
 
-it('exposes passkey management on the security settings page', function (): void {
+it('exposes passkey management on the security page', function (): void {
     $admin = User::factory()->admin()->create();
+    $admin->passkeys()->create([
+        'name' => 'Laptop',
+        'credential_id' => 'cred-1',
+        'credential' => ['foo' => 'bar'],
+    ]);
 
-    $this->actingAs($admin)
-        ->withSession(['auth.password_confirmed_at' => time()])
-        ->get(route('security.edit'))
-        ->assertOk()
-        ->assertInertia(
-            fn ($page) => $page
-                ->component('settings/security')
-                ->where('canManagePasskeys', true)
-                ->has('passkeys'),
-        );
+    $this->actingAs($admin);
+
+    $page = Pest\Livewire\livewire(Security::class)->assertOk();
+
+    expect($page->instance()->canManagePasskeys())->toBeTrue();
+    expect($page->instance()->getPasskeys())->toHaveCount(1);
+    expect($page->instance()->getPasskeys()[0]['name'])->toBe('Laptop');
 });

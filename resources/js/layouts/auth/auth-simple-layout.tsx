@@ -14,9 +14,9 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center bg-muted/40 p-6 md:p-10 dark:bg-background">
+        <div className="flex min-h-svh flex-col items-center justify-center bg-white p-6 md:p-10 dark:bg-background">
             <div className="w-full max-w-sm">
-                <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+                <div className="overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-card">
                     <div aria-hidden className="h-0.5 bg-brand" />
 
                     <div className="p-8">
