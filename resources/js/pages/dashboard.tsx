@@ -8,7 +8,7 @@ import {
     Tag as TagIcon,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { AdminPage } from '@/components/admin/admin-page';
+import { AdminPage } from '@/components/admin-page';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,12 +27,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { dashboard } from '@/routes';
-import {
-    create as createArticle,
-    edit as editArticle,
-    index as articlesIndex,
-} from '@/routes/admin/articles';
-import { index as pagesIndex } from '@/routes/admin/pages';
 
 type Stats = {
     articles: { total: number; published: number; drafts: number };
@@ -66,7 +60,7 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                 description="Overview of your content"
                 actions={
                     <Button asChild>
-                        <Link href={createArticle()}>New article</Link>
+                        <a href="/admin/articles/create">New article</a>
                     </Button>
                 }
             >
@@ -74,14 +68,16 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                     <StatCard
                         title="Articles"
                         icon={Newspaper}
-                        href={articlesIndex().url}
+                        href="/admin/articles"
+                        external
                         primary={stats.articles.total}
                         sub={`${stats.articles.published} published · ${stats.articles.drafts} drafts`}
                     />
                     <StatCard
                         title="Pages"
                         icon={FileText}
-                        href={pagesIndex().url}
+                        href="/admin/pages"
+                        external
                         primary={stats.pages.total}
                         sub={`${stats.pages.published} published`}
                     />
@@ -120,12 +116,12 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                         {recentArticles.length === 0 ? (
                             <p className="py-8 text-center text-sm text-muted-foreground">
                                 No articles yet.{' '}
-                                <Link
-                                    href={createArticle()}
+                                <a
+                                    href="/admin/articles/create"
                                     className="font-medium text-foreground underline-offset-4 hover:underline"
                                 >
                                     Write your first one
-                                </Link>
+                                </a>
                                 .
                             </p>
                         ) : (
@@ -144,14 +140,12 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                                     {recentArticles.map((article) => (
                                         <TableRow key={article.id}>
                                             <TableCell className="font-medium">
-                                                <Link
-                                                    href={editArticle(
-                                                        article.slug,
-                                                    )}
+                                                <a
+                                                    href={`/admin/articles/${article.id}/edit`}
                                                     className="hover:underline"
                                                 >
                                                     {article.title}
-                                                </Link>
+                                                </a>
                                             </TableCell>
                                             <TableCell className="text-muted-foreground">
                                                 {article.category?.name ?? '—'}

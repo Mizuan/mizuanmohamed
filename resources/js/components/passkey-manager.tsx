@@ -2,7 +2,7 @@ import { router } from '@inertiajs/react';
 import { Fingerprint, KeyRound, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { ConfirmDialog } from '@/components/admin/confirm-dialog';
+import { ConfirmDialog } from '@/components/confirm-dialog';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';

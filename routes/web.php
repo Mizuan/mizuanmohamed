@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\ArticleController;
-use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\Site\ArticleController as SiteArticleController;
@@ -48,15 +46,6 @@ Route::group(
         Route::middleware(['auth', 'verified', 'admin'])->group(function () {
             Route::get('dashboard', DashboardController::class)->name('dashboard');
         });
-
-        Route::middleware(['auth', 'verified', 'admin'])
-            ->prefix('admin')
-            ->name('admin.')
-            ->group(function () {
-                // Categories, tags and projects are managed by the Filament panel.
-                Route::resource('articles', ArticleController::class)->except('show');
-                Route::resource('pages', PageController::class)->except('show');
-            });
 
         require __DIR__.'/settings.php';
     });

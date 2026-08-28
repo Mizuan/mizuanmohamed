@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 #[Fillable([
@@ -42,6 +43,16 @@ class Article extends Model
         static::saving(function (Article $article): void {
             if (empty($article->slug)) {
                 $article->slug = Str::slug((string) $article->title);
+            }
+
+            if ($article->status === ArticleStatus::Published && $article->published_at === null) {
+                $article->published_at = now();
+            }
+        });
+
+        static::deleted(function (Article $article): void {
+            if ($article->featured_image) {
+                Storage::disk('public')->delete($article->featured_image);
             }
         });
     }

@@ -20,8 +20,6 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as articlesIndex } from '@/routes/admin/articles';
-import { index as pagesIndex } from '@/routes/admin/pages';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -32,8 +30,9 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Articles',
-        href: articlesIndex(),
+        href: '/admin/articles',
         icon: Newspaper,
+        external: true,
     },
     {
         title: 'Categories',
@@ -49,8 +48,9 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Pages',
-        href: pagesIndex(),
+        href: '/admin/pages',
         icon: FileText,
+        external: true,
     },
     {
         title: 'Projects',
