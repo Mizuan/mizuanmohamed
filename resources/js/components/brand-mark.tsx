@@ -9,7 +9,7 @@ export default function BrandMark({ className }: { className?: string }) {
         <span
             aria-hidden="true"
             className={cn(
-                'inline-flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-brand font-poster text-lg leading-none text-white',
+                'inline-flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-brand font-display text-lg font-semibold leading-none text-white',
                 className,
             )}
         >

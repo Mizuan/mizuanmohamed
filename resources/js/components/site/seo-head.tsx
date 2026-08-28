@@ -51,10 +51,7 @@ export function SeoHead({
             <meta property="og:url" content={url} />
             <meta property="og:image" content={og} />
             {publishedAt && (
-                <meta
-                    property="article:published_time"
-                    content={publishedAt}
-                />
+                <meta property="article:published_time" content={publishedAt} />
             )}
 
             <meta name="twitter:card" content="summary_large_image" />

@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { ArrowUpRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
+import { CropMarks } from '@/components/site/crop-marks';
 import { index as projectsIndex } from '@/routes/site/projects';
 
 export type ProjectListItem = {
@@ -13,81 +14,114 @@ export type ProjectListItem = {
     link: string | null;
 };
 
-const pad = (n: number) => String(n).padStart(2, '0');
+function stackOf(project: ProjectListItem): string[] {
+    return project.technologies?.length
+        ? project.technologies
+        : (project.tags ?? []);
+}
 
-/**
- * A film-credits-style roll of projects: an index number, the title in large
- * display type, the stack, and a trailing arrow — no imagery. Each row links
- * out to the live project when one exists, otherwise to the projects index.
- */
-export function ProjectList({
-    projects,
-    startIndex = 0,
+function ProjectLink({
+    project,
+    className,
+    children,
 }: {
-    projects: ProjectListItem[];
-    startIndex?: number;
+    project: ProjectListItem;
+    className: string;
+    children: ReactNode;
 }) {
+    if (project.link) {
+        return (
+            <a
+                href={project.link}
+                target="_blank"
+                rel="noreferrer"
+                className={className}
+            >
+                {children}
+            </a>
+        );
+    }
+
     return (
-        <ul>
-            {projects.map((project, i) => {
-                const stack = project.technologies?.length
-                    ? project.technologies
-                    : (project.tags ?? []);
-                const external = Boolean(project.link);
-                const rowClass =
-                    'group grid grid-cols-[auto_1fr] items-baseline gap-x-5 gap-y-2 border-t border-border py-7 transition-colors sm:grid-cols-[3.5rem_1fr_auto] lg:py-9';
+        <Link href={projectsIndex()} className={className}>
+            {children}
+        </Link>
+    );
+}
 
-                // Long titles step down a size so every row stays 1–2 clean
-                // lines; the uppercase system reads as intentional that way.
-                const isLongTitle = project.title.length > 22;
+/** Home page showcase: centred cards that scroll horizontally on mobile. */
+export function ProjectCards({ projects }: { projects: ProjectListItem[] }) {
+    return (
+        <ul className="no-scrollbar -mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-2 md:mx-0 md:grid md:grid-cols-2 md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-4">
+            {projects.map((project) => (
+                <li
+                    key={project.id}
+                    className="w-[78%] max-w-xs shrink-0 snap-start md:w-auto md:max-w-none"
+                >
+                    <ProjectLink
+                        project={project}
+                        className="group relative flex h-full flex-col items-center rounded-md bg-card p-7 text-center transition-colors hover:bg-accent"
+                    >
+                        <CropMarks className="-inset-1.5 text-border opacity-0 transition-opacity group-hover:opacity-100" />
 
-                const inner = (
-                    <>
-                        <span className="font-display text-xs font-medium text-muted-foreground tabular-nums transition-colors group-hover:text-brand">
-                            {pad(startIndex + i + 1)}
+                        <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-background font-display text-xl font-semibold text-brand">
+                            {project.title.charAt(0).toUpperCase()}
                         </span>
 
-                        <div className="min-w-0 transition-transform duration-300 ease-out group-hover:translate-x-2">
-                            <h3
-                                className={cn(
-                                    'font-display leading-[0.95] font-semibold tracking-[-0.02em] text-balance wrap-break-word text-foreground uppercase transition-colors group-hover:text-brand',
-                                    isLongTitle
-                                        ? 'text-[clamp(1.35rem,3.8vw,2.75rem)]'
-                                        : 'text-[clamp(1.75rem,5.5vw,4rem)]',
-                                )}
-                            >
-                                {project.title}
-                            </h3>
-                            {stack.length > 0 && (
-                                <p className="mt-3 font-display text-[11px] font-medium tracking-[0.14em] text-muted-foreground uppercase">
-                                    {stack.join(' / ')}
+                        <h3 className="mt-5 font-display font-semibold tracking-[-0.01em] text-balance transition-colors group-hover:text-brand">
+                            {project.title}
+                        </h3>
+
+                        {project.description && (
+                            <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                                {project.description}
+                            </p>
+                        )}
+
+                        {stackOf(project).length > 0 && (
+                            <p className="mt-4 text-xs text-muted-foreground">
+                                {stackOf(project).slice(0, 3).join(' · ')}
+                            </p>
+                        )}
+                    </ProjectLink>
+                </li>
+            ))}
+        </ul>
+    );
+}
+
+/** Projects page inventory: one scannable row per project. */
+export function ProjectRows({ projects }: { projects: ProjectListItem[] }) {
+    return (
+        <ul className="border-t border-border">
+            {projects.map((project) => (
+                <li key={project.id}>
+                    <ProjectLink
+                        project={project}
+                        className="group flex flex-col gap-2 border-b border-border py-6 sm:flex-row sm:items-baseline sm:gap-8"
+                    >
+                        <h3 className="flex items-center gap-1.5 font-display font-semibold tracking-[-0.01em] transition-colors group-hover:text-brand sm:w-56 sm:shrink-0">
+                            {project.title}
+                            {project.link && (
+                                <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-brand" />
+                            )}
+                        </h3>
+
+                        <div className="min-w-0 flex-1">
+                            {project.description && (
+                                <p className="leading-relaxed text-muted-foreground">
+                                    {project.description}
+                                </p>
+                            )}
+                            {stackOf(project).length > 0 && (
+                                <p className="mt-2 text-xs text-muted-foreground">
+                                    {stackOf(project).join(' · ')}
                                 </p>
                             )}
                         </div>
-
-                        <ArrowUpRight className="col-start-2 size-6 shrink-0 self-center text-muted-foreground opacity-60 transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-brand group-hover:opacity-100 sm:col-start-3" />
-                    </>
-                );
-
-                return (
-                    <li key={project.id}>
-                        {external ? (
-                            <a
-                                href={project.link!}
-                                target="_blank"
-                                rel="noreferrer"
-                                className={rowClass}
-                            >
-                                {inner}
-                            </a>
-                        ) : (
-                            <Link href={projectsIndex()} className={rowClass}>
-                                {inner}
-                            </Link>
-                        )}
-                    </li>
-                );
-            })}
+                    </ProjectLink>
+                </li>
+            ))}
         </ul>
     );
 }

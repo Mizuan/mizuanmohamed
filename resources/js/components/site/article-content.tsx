@@ -27,12 +27,12 @@ export function ArticleContent({ html, className }: Props) {
         });
 
         // Open external links in a new tab and flag them safely.
-        root.querySelectorAll<HTMLAnchorElement>(
-            'a[href^="http"]',
-        ).forEach((anchor) => {
-            anchor.target = '_blank';
-            anchor.rel = 'noopener noreferrer';
-        });
+        root.querySelectorAll<HTMLAnchorElement>('a[href^="http"]').forEach(
+            (anchor) => {
+                anchor.target = '_blank';
+                anchor.rel = 'noopener noreferrer';
+            },
+        );
 
         // Wrap code blocks with a toolbar (language label + copy button).
         root.querySelectorAll<HTMLPreElement>('pre').forEach((pre) => {

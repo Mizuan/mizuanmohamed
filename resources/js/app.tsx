@@ -13,14 +13,6 @@ createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
-            // The home and about pages are full-bleed, immersive pages with
-            // their own chrome, so they opt out of the shared site layout.
-            case name === 'site/home':
-            case name === 'site/about':
-            case name === 'site/contact':
-            case name === 'site/projects/index':
-            case name === 'site/articles/index':
-                return null;
             case name.startsWith('site/'):
                 return SiteLayout;
             case name.startsWith('auth/'):
@@ -45,5 +37,10 @@ createInertiaApp({
     },
 });
 
-// This will set light / dark mode on load...
-initializeTheme();
+// The public site is light-only; only the admin follows the appearance setting.
+if (document.documentElement.hasAttribute('data-public-site')) {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.style.colorScheme = 'light';
+} else {
+    initializeTheme();
+}

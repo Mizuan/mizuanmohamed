@@ -23,15 +23,10 @@ export default function PageShow({ page }: Props) {
                 description={page.meta_description ?? undefined}
             />
 
-            <article className="pb-16">
+            <article className="mx-auto max-w-2xl">
                 <PageHeader title={page.title} />
 
-                {page.content && (
-                    <ArticleContent
-                        html={page.content}
-                        className="text-base"
-                    />
-                )}
+                {page.content && <ArticleContent html={page.content} />}
             </article>
         </>
     );

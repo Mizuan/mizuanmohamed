@@ -25,7 +25,7 @@ export default function AuthSimpleLayout({
                             className="inline-flex items-center gap-3"
                         >
                             <BrandMark className="size-9 text-xl" />
-                            <span className="font-poster text-sm tracking-[0.16em] uppercase">
+                            <span className="font-display text-sm font-semibold tracking-[0.16em] uppercase">
                                 Mizuan Mohamed
                             </span>
                         </Link>
