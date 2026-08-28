@@ -118,5 +118,5 @@ export async function loginWithPasskey(remember: boolean): Promise<string> {
 
     const data = await res.json();
 
-    return (data.redirect as string) ?? '/dashboard';
+    return (data.redirect as string) ?? '/admin';
 }

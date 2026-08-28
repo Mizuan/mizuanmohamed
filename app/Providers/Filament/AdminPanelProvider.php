@@ -12,7 +12,9 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -29,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('Mizuan Mohamed')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             // Shades 500 and 600 are dark enough to carry white text, so solid
             // buttons use the crimson background rather than Filament's pale
             // dark-text fallback.
@@ -57,6 +60,10 @@ class AdminPanelProvider extends PanelProvider
                 ContentOverview::class,
                 LatestArticles::class,
             ])
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): View => view('filament.footer'),
+            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
