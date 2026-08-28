@@ -41,7 +41,10 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            // Root-relative so uploads resolve against whichever host is
+            // serving them; an absolute APP_URL breaks CORS on the admin
+            // subdomain, where the panel fetches its own file previews.
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
