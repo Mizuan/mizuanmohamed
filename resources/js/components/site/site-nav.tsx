@@ -29,7 +29,7 @@ export function SiteNav() {
         href === '/' ? currentUrl === '/' : currentUrl.startsWith(href);
 
     return (
-        <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-backdrop-filter:bg-background/70">
+        <header className="sticky top-0 z-40 border-b border-border bg-background">
             <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4 lg:px-8">
                 <Link
                     href={home()}

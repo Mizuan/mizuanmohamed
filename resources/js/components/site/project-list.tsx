@@ -100,7 +100,7 @@ export function ProjectRows({ projects }: { projects: ProjectListItem[] }) {
                         project={project}
                         className="group flex flex-col gap-2 border-b border-border py-6 sm:flex-row sm:items-baseline sm:gap-8"
                     >
-                        <h3 className="flex items-center gap-1.5 font-display font-semibold tracking-[-0.01em] transition-colors group-hover:text-brand sm:w-56 sm:shrink-0">
+                        <h3 className="flex items-center gap-1.5 font-display font-semibold tracking-[-0.01em] text-balance transition-colors group-hover:text-brand sm:w-80 sm:shrink-0">
                             {project.title}
                             {project.link && (
                                 <ArrowUpRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-brand" />
@@ -109,7 +109,7 @@ export function ProjectRows({ projects }: { projects: ProjectListItem[] }) {
 
                         <div className="min-w-0 flex-1">
                             {project.description && (
-                                <p className="leading-relaxed text-muted-foreground">
+                                <p className="max-w-2xl leading-relaxed text-muted-foreground">
                                     {project.description}
                                 </p>
                             )}
