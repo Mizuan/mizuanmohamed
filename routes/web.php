@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\Site\ArticleController as SiteArticleController;
 use App\Http\Controllers\Site\HomeController;
@@ -43,9 +42,10 @@ Route::group(
         'middleware' => [PreventIndexing::class],
     ]),
     function () {
-        Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-            Route::get('dashboard', DashboardController::class)->name('dashboard');
-        });
+        // Kept as a named route because Fortify redirects here after login.
+        Route::middleware(['auth', 'verified', 'admin'])
+            ->get('dashboard', fn () => redirect('/admin'))
+            ->name('dashboard');
 
         require __DIR__.'/settings.php';
     });

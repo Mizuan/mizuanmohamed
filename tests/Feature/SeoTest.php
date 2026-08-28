@@ -36,7 +36,7 @@ it('sends a noindex header on the admin surface', function (): void {
     $admin = User::factory()->admin()->create();
 
     $this->actingAs($admin)
-        ->get(route('dashboard'))
+        ->get('/admin')
         ->assertOk()
         ->assertHeader('X-Robots-Tag', 'noindex, nofollow');
 });
