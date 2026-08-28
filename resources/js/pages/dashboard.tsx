@@ -32,10 +32,8 @@ import {
     edit as editArticle,
     index as articlesIndex,
 } from '@/routes/admin/articles';
-import { index as categoriesIndex } from '@/routes/admin/categories';
 import { index as pagesIndex } from '@/routes/admin/pages';
 import { index as projectsIndex } from '@/routes/admin/projects';
-import { index as tagsIndex } from '@/routes/admin/tags';
 
 type Stats = {
     articles: { total: number; published: number; drafts: number };
@@ -98,13 +96,15 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                     <StatCard
                         title="Categories"
                         icon={Layers}
-                        href={categoriesIndex().url}
+                        href="/admin/categories"
+                        external
                         primary={stats.categories}
                     />
                     <StatCard
                         title="Tags"
                         icon={TagIcon}
-                        href={tagsIndex().url}
+                        href="/admin/tags"
+                        external
                         primary={stats.tags}
                     />
                 </div>
@@ -194,19 +194,21 @@ function StatCard({
     primary,
     sub,
     href,
+    external,
     icon: Icon,
 }: {
     title: string;
     primary: number;
     sub?: string;
     href: string;
+    external?: boolean;
     icon: LucideIcon;
 }) {
-    return (
-        <Link
-            href={href}
-            className="group block w-56 shrink-0 snap-start rounded-lg border bg-card p-4 transition-colors hover:bg-accent sm:w-auto sm:shrink"
-        >
+    const className =
+        'group block w-56 shrink-0 snap-start rounded-lg border bg-card p-4 transition-colors hover:bg-accent sm:w-auto sm:shrink';
+
+    const body = (
+        <>
             <div className="flex items-center justify-between">
                 <p className="text-xs font-medium text-muted-foreground">
                     {title}
@@ -219,6 +221,20 @@ function StatCard({
                     {sub}
                 </p>
             )}
+        </>
+    );
+
+    if (external) {
+        return (
+            <a href={href} className={className}>
+                {body}
+            </a>
+        );
+    }
+
+    return (
+        <Link href={href} className={className}>
+            {body}
         </Link>
     );
 }

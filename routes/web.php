@@ -1,10 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\ArticleController;
-use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProjectController;
-use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\Site\ArticleController as SiteArticleController;
@@ -56,12 +54,9 @@ Route::group(
             ->prefix('admin')
             ->name('admin.')
             ->group(function () {
-                // Categories, tags and projects are managed via dialog modals on
-                // the index page, so they don't need create/edit screens.
-                Route::resource('categories', CategoryController::class)
-                    ->except(['show', 'create', 'edit']);
-                Route::resource('tags', TagController::class)
-                    ->except(['show', 'create', 'edit']);
+                // Categories and tags are managed by the Filament panel.
+                // Projects are managed via dialog modals on the index page, so
+                // they don't need create/edit screens.
                 Route::resource('projects', ProjectController::class)
                     ->except(['show', 'create', 'edit']);
                 Route::resource('articles', ArticleController::class)->except('show');

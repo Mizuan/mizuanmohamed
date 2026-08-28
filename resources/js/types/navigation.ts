@@ -11,4 +11,6 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    /** Renders a plain anchor — used for sections served by the Filament panel. */
+    external?: boolean;
 };
