@@ -22,7 +22,6 @@ import {
 import { dashboard } from '@/routes';
 import { index as articlesIndex } from '@/routes/admin/articles';
 import { index as pagesIndex } from '@/routes/admin/pages';
-import { index as projectsIndex } from '@/routes/admin/projects';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -55,7 +54,8 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Projects',
-        href: projectsIndex(),
+        href: '/admin/projects',
+        external: true,
         icon: FolderKanban,
     },
 ];

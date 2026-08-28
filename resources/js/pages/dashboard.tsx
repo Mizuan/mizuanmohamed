@@ -33,7 +33,6 @@ import {
     index as articlesIndex,
 } from '@/routes/admin/articles';
 import { index as pagesIndex } from '@/routes/admin/pages';
-import { index as projectsIndex } from '@/routes/admin/projects';
 
 type Stats = {
     articles: { total: number; published: number; drafts: number };
@@ -89,7 +88,8 @@ export default function Dashboard({ stats, recentArticles }: Props) {
                     <StatCard
                         title="Projects"
                         icon={FolderKanban}
-                        href={projectsIndex().url}
+                        href="/admin/projects"
+                        external
                         primary={stats.projects.total}
                         sub={`${stats.projects.published} published`}
                     />
