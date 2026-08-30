@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             SiteSettingSeeder::class,
             SocialLinkSeeder::class,
+            NavigationItemSeeder::class,
             ProjectSeeder::class,
             PagesSeeder::class,
             ArticlesSeeder::class,

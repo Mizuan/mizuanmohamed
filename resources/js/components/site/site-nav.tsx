@@ -11,24 +11,24 @@ import {
 import { useSiteSettings } from '@/hooks/use-site-settings';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
-import { index as articlesIndex } from '@/routes/site/articles';
-import { show as pageShow } from '@/routes/site/pages';
-import { index as projectsIndex } from '@/routes/site/projects';
 
-const navLinks = [
-    { label: 'Writing', href: articlesIndex().url },
-    { label: 'Projects', href: projectsIndex().url },
-    { label: 'About', href: pageShow('about').url },
-];
+export type NavItem = {
+    label: string;
+    url: string;
+    is_cta: boolean;
+};
 
-const contactHref = pageShow('contact').url;
+function useNavItems(): NavItem[] {
+    return usePage<{ site: { nav: NavItem[] } }>().props.site.nav;
+}
 
 export function SiteNav() {
     const currentUrl = usePage().url;
     const settings = useSiteSettings();
+    const items = useNavItems();
 
-    const isActive = (href: string) =>
-        href === '/' ? currentUrl === '/' : currentUrl.startsWith(href);
+    const isActive = (url: string) =>
+        url === '/' ? currentUrl === '/' : currentUrl.startsWith(url);
 
     return (
         <header className="sticky top-0 z-40 border-b border-border bg-background">
@@ -41,38 +41,42 @@ export function SiteNav() {
                 </Link>
 
                 <nav className="hidden items-center gap-6 text-sm sm:flex">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            aria-current={
-                                isActive(link.href) ? 'page' : undefined
-                            }
-                            className={cn(
-                                'transition-colors hover:text-brand',
-                                isActive(link.href)
-                                    ? 'text-brand'
-                                    : 'text-muted-foreground',
-                            )}
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
-
-                    <Link
-                        href={contactHref}
-                        className={cn(
-                            'rounded-full px-4 py-1.5 font-medium transition-colors',
-                            isActive(contactHref)
-                                ? 'bg-brand text-brand-foreground'
-                                : 'border border-border bg-card hover:border-brand/40 hover:text-brand',
-                        )}
-                    >
-                        Get in touch
-                    </Link>
+                    {items.map((item) =>
+                        item.is_cta ? (
+                            <Link
+                                key={item.url}
+                                href={item.url}
+                                className={cn(
+                                    'rounded-full px-4 py-1.5 font-medium transition-colors',
+                                    isActive(item.url)
+                                        ? 'bg-brand text-brand-foreground'
+                                        : 'border border-border bg-card hover:border-brand/40 hover:text-brand',
+                                )}
+                            >
+                                {item.label}
+                            </Link>
+                        ) : (
+                            <Link
+                                key={item.url}
+                                href={item.url}
+                                aria-current={
+                                    isActive(item.url) ? 'page' : undefined
+                                }
+                                className={cn(
+                                    'transition-colors hover:text-brand',
+                                    isActive(item.url)
+                                        ? 'text-brand'
+                                        : 'text-muted-foreground',
+                                )}
+                            >
+                                {item.label}
+                            </Link>
+                        ),
+                    )}
                 </nav>
 
                 <MobileMenu
+                    items={items}
                     isActive={isActive}
                     brandName={settings.brand_name}
                 />
@@ -82,14 +86,15 @@ export function SiteNav() {
 }
 
 function MobileMenu({
+    items,
     isActive,
     brandName,
 }: {
-    isActive: (href: string) => boolean;
+    items: NavItem[];
+    isActive: (url: string) => boolean;
     brandName: string;
 }) {
     const [open, setOpen] = useState(false);
-    const links = [...navLinks, { label: 'Contact', href: contactHref }];
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -112,13 +117,13 @@ function MobileMenu({
                 </SheetTitle>
 
                 <nav className="flex flex-col px-6 py-4">
-                    {links.map((link) => {
-                        const active = isActive(link.href);
+                    {items.map((item) => {
+                        const active = isActive(item.url);
 
                         return (
                             <Link
-                                key={link.href}
-                                href={link.href}
+                                key={item.url}
+                                href={item.url}
                                 onClick={() => setOpen(false)}
                                 aria-current={active ? 'page' : undefined}
                                 className={cn(
@@ -135,7 +140,7 @@ function MobileMenu({
                                 >
                                     —
                                 </span>
-                                {link.label}
+                                {item.label}
                             </Link>
                         );
                     })}

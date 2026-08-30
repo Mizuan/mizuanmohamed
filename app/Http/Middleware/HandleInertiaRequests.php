@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\NavigationItem;
 use App\Models\SiteSetting;
 use App\Models\SocialLink;
 use Illuminate\Http\Request;
@@ -62,6 +63,7 @@ class HandleInertiaRequests extends Middleware
                     'contact_email',
                     'footer_text',
                 ]),
+                'nav' => NavigationItem::visible(),
                 'social' => SocialLink::visible(),
             ],
         ];
