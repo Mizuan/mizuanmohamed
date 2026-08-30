@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
-import { SOCIAL_LINKS } from '@/components/site/social-links';
+import { SocialIconLinks } from '@/components/site/social-links';
 import {
     Sheet,
     SheetContent,
@@ -141,26 +141,7 @@ function MobileMenu({
                     })}
                 </nav>
 
-                <div className="mt-auto flex items-center gap-5 border-t border-border px-6 py-5">
-                    {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
-                        <a
-                            key={label}
-                            href={href}
-                            aria-label={label}
-                            target={
-                                href.startsWith('http') ? '_blank' : undefined
-                            }
-                            rel={
-                                href.startsWith('http')
-                                    ? 'noreferrer'
-                                    : undefined
-                            }
-                            className="text-muted-foreground transition-colors hover:text-brand"
-                        >
-                            <Icon className="size-4.5" />
-                        </a>
-                    ))}
-                </div>
+                <SocialIconLinks className="mt-auto flex items-center gap-5 border-t border-border px-6 py-5" />
             </SheetContent>
         </Sheet>
     );

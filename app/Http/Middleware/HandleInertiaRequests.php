@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Models\SiteSetting;
+use App\Models\SocialLink;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -61,6 +62,7 @@ class HandleInertiaRequests extends Middleware
                     'contact_email',
                     'footer_text',
                 ]),
+                'social' => SocialLink::visible(),
             ],
         ];
     }

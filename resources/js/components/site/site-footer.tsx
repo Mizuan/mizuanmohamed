@@ -1,4 +1,4 @@
-import { SOCIAL_LINKS } from '@/components/site/social-links';
+import { SocialIconLinks } from '@/components/site/social-links';
 import { useSiteSettings } from '@/hooks/use-site-settings';
 
 export function SiteFooter() {
@@ -10,26 +10,8 @@ export function SiteFooter() {
                 <p>
                     &copy; {new Date().getFullYear()} {settings.footer_text}
                 </p>
-                <div className="flex items-center gap-5">
-                    {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
-                        <a
-                            key={label}
-                            href={href}
-                            aria-label={label}
-                            target={
-                                href.startsWith('http') ? '_blank' : undefined
-                            }
-                            rel={
-                                href.startsWith('http')
-                                    ? 'noreferrer'
-                                    : undefined
-                            }
-                            className="transition-colors hover:text-brand"
-                        >
-                            <Icon className="size-4.5" />
-                        </a>
-                    ))}
-                </div>
+
+                <SocialIconLinks className="flex items-center gap-5" />
             </div>
         </footer>
     );

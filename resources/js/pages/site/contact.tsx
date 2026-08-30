@@ -3,24 +3,26 @@ import { useState } from 'react';
 import { PageHeader } from '@/components/site/page-header';
 import { SectionLabel } from '@/components/site/section-label';
 import { SeoHead } from '@/components/site/seo-head';
-import { SOCIAL_LINKS } from '@/components/site/social-links';
-
-const EMAIL = 'mizuan.mohamed@gmail.com';
+import { socialIcon, useSocialLinks } from '@/components/site/social-links';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 
 export default function Contact({
     metaDescription,
 }: {
     metaDescription?: string | null;
 }) {
+    const settings = useSiteSettings();
+    const socials = useSocialLinks();
+    const email = settings.contact_email ?? '';
     const [copied, setCopied] = useState(false);
 
     const copyEmail = async () => {
         try {
-            await navigator.clipboard.writeText(EMAIL);
+            await navigator.clipboard.writeText(email);
             setCopied(true);
             window.setTimeout(() => setCopied(false), 2000);
         } catch {
-            window.location.href = `mailto:${EMAIL}`;
+            window.location.href = `mailto:${email}`;
         }
     };
 
@@ -41,10 +43,10 @@ export default function Contact({
                     <SectionLabel>Email</SectionLabel>
                     <div className="mt-3 flex flex-wrap items-center gap-3">
                         <a
-                            href={`mailto:${EMAIL}`}
+                            href={`mailto:${email}`}
                             className="font-display text-lg font-medium break-all transition-colors hover:text-brand sm:text-xl"
                         >
-                            {EMAIL}
+                            {email}
                         </a>
                         <button
                             type="button"
@@ -64,22 +66,26 @@ export default function Contact({
                 <section className="mt-10 border-t border-border pt-8">
                     <SectionLabel>Elsewhere</SectionLabel>
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                        {SOCIAL_LINKS.filter(
-                            (link) => !link.href.startsWith('mailto:'),
-                        ).map(({ label, href, icon: Icon }) => (
-                            <a
-                                key={label}
-                                href={href}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="group flex items-center gap-3 rounded-md border border-border bg-card px-4 py-3 transition-colors hover:border-brand/40"
-                            >
-                                <Icon className="size-4.5 text-muted-foreground transition-colors group-hover:text-brand" />
-                                <span className="text-sm font-medium transition-colors group-hover:text-brand">
-                                    {label}
-                                </span>
-                            </a>
-                        ))}
+                        {socials
+                            .filter((link) => link.platform !== 'email')
+                            .map(({ platform, label, url }) => {
+                                const Icon = socialIcon(platform);
+
+                                return (
+                                    <a
+                                        key={label}
+                                        href={url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="group flex items-center gap-3 rounded-md border border-border bg-card px-4 py-3 transition-colors hover:border-brand/40"
+                                    >
+                                        <Icon className="size-4.5 text-muted-foreground transition-colors group-hover:text-brand" />
+                                        <span className="text-sm font-medium transition-colors group-hover:text-brand">
+                                            {label}
+                                        </span>
+                                    </a>
+                                );
+                            })}
                     </div>
                 </section>
             </div>
