@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,6 +36,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $settings = SiteSetting::current();
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -44,7 +47,20 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'site' => [
                 'url' => config('app.url'),
-                'description' => 'Software developer based in Malé, Maldives. Notes, articles, and projects.',
+                'description' => $settings->meta_description,
+                'settings' => $settings->only([
+                    'brand_name',
+                    'hero_eyebrow',
+                    'hero_heading',
+                    'hero_intro',
+                    'hero_primary_label',
+                    'hero_primary_url',
+                    'hero_secondary_label',
+                    'hero_secondary_url',
+                    'contact_text',
+                    'contact_email',
+                    'footer_text',
+                ]),
             ],
         ];
     }

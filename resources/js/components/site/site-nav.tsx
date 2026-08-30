@@ -8,6 +8,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
+import { useSiteSettings } from '@/hooks/use-site-settings';
 import { cn } from '@/lib/utils';
 import { home } from '@/routes';
 import { index as articlesIndex } from '@/routes/site/articles';
@@ -24,6 +25,7 @@ const contactHref = pageShow('contact').url;
 
 export function SiteNav() {
     const currentUrl = usePage().url;
+    const settings = useSiteSettings();
 
     const isActive = (href: string) =>
         href === '/' ? currentUrl === '/' : currentUrl.startsWith(href);
@@ -35,7 +37,7 @@ export function SiteNav() {
                     href={home()}
                     className="font-display font-semibold tracking-[-0.01em] transition-colors hover:text-brand"
                 >
-                    Mizuan Mohamed
+                    {settings.brand_name}
                 </Link>
 
                 <nav className="hidden items-center gap-6 text-sm sm:flex">
@@ -70,13 +72,22 @@ export function SiteNav() {
                     </Link>
                 </nav>
 
-                <MobileMenu isActive={isActive} />
+                <MobileMenu
+                    isActive={isActive}
+                    brandName={settings.brand_name}
+                />
             </div>
         </header>
     );
 }
 
-function MobileMenu({ isActive }: { isActive: (href: string) => boolean }) {
+function MobileMenu({
+    isActive,
+    brandName,
+}: {
+    isActive: (href: string) => boolean;
+    brandName: string;
+}) {
     const [open, setOpen] = useState(false);
     const links = [...navLinks, { label: 'Contact', href: contactHref }];
 
@@ -97,7 +108,7 @@ function MobileMenu({ isActive }: { isActive: (href: string) => boolean }) {
                 className="w-4/5 max-w-xs gap-0 border-border bg-background p-0"
             >
                 <SheetTitle className="border-b border-border px-6 py-4 font-display text-base font-semibold tracking-[-0.01em]">
-                    Mizuan Mohamed
+                    {brandName}
                 </SheetTitle>
 
                 <nav className="flex flex-col px-6 py-4">
