@@ -168,16 +168,16 @@ function MobileMenu({
             <SheetContent
                 side="right"
                 hideClose
-                className="flex h-full w-full max-w-none flex-col gap-0 border-0 bg-brand p-0 text-brand-foreground"
+                className="flex h-full w-full max-w-none flex-col gap-0 border-0 bg-background/70 p-0 text-foreground backdrop-blur-xl"
             >
                 <div className="flex items-center justify-between px-6 py-4">
-                    <SheetTitle className="font-display text-base font-semibold tracking-[-0.01em] text-brand-foreground">
+                    <SheetTitle className="font-display text-2xl font-bold tracking-tight">
                         {brandName}
                     </SheetTitle>
 
                     <SheetClose
                         aria-label="Close menu"
-                        className="inline-flex size-9 items-center justify-center rounded-md transition-opacity hover:opacity-70"
+                        className="-mr-1.5 inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand"
                     >
                         <X className="size-5" />
                     </SheetClose>
@@ -194,14 +194,14 @@ function MobileMenu({
                                 onClick={() => setOpen(false)}
                                 aria-current={active ? 'page' : undefined}
                                 className={cn(
-                                    'flex items-center gap-3 py-4 font-display text-3xl font-semibold tracking-tight transition-opacity',
-                                    active ? 'opacity-100' : 'opacity-70',
+                                    'flex items-center gap-3 py-4 font-display text-3xl font-semibold tracking-tight transition-colors',
+                                    active ? 'text-brand' : 'hover:text-brand',
                                 )}
                             >
                                 <span
                                     aria-hidden
                                     className={cn(
-                                        'text-xl transition-opacity',
+                                        'text-xl text-brand transition-opacity',
                                         active ? 'opacity-100' : 'opacity-0',
                                     )}
                                 >
@@ -219,15 +219,13 @@ function MobileMenu({
                         setOpen(false);
                         onSearch();
                     }}
-                    className="mx-6 mt-8 flex items-center gap-3 rounded-full border border-brand-foreground/30 px-5 py-3 text-left text-sm transition-colors hover:bg-brand-foreground/10"
+                    className="mx-6 mt-8 flex items-center gap-3 rounded-full border border-border bg-card px-5 py-3 text-left text-sm text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
                 >
                     <Search className="size-4" />
                     Search the site
                 </button>
 
-                <div className="mt-auto flex items-center gap-5 px-6 py-8 text-brand-foreground/80">
-                    <SocialIconLinks className="flex items-center gap-5 [&_a]:text-brand-foreground/80 [&_a:hover]:text-brand-foreground" />
-                </div>
+                <SocialIconLinks className="mt-auto flex items-center gap-5 border-t border-border px-6 py-6" />
             </SheetContent>
         </Sheet>
     );
