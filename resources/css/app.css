@@ -205,6 +205,80 @@
         display: none;
     }
 
+    /* Brief signal-drop on the tagline. Needs `data-text`. */
+    .glitch {
+        position: relative;
+        display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+        content: attr(data-text);
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: inherit;
+    }
+    .glitch::before {
+        color: var(--brand);
+        clip-path: inset(0 0 55% 0);
+        animation: glitch-top 7s steps(1) infinite;
+    }
+    .glitch::after {
+        color: var(--muted-foreground);
+        clip-path: inset(55% 0 0 0);
+        animation: glitch-bottom 7s steps(1) infinite;
+    }
+
+    @keyframes glitch-top {
+        0%,
+        4%,
+        100% {
+            transform: translate(0);
+            opacity: 0;
+        }
+        1% {
+            transform: translate(-2px, -1px);
+            opacity: 0.85;
+        }
+        2% {
+            transform: translate(1px, 0);
+            opacity: 0.6;
+        }
+        3% {
+            transform: translate(-1px, 1px);
+            opacity: 0.75;
+        }
+    }
+
+    @keyframes glitch-bottom {
+        0%,
+        4%,
+        100% {
+            transform: translate(0);
+            opacity: 0;
+        }
+        1% {
+            transform: translate(2px, 1px);
+            opacity: 0.7;
+        }
+        2% {
+            transform: translate(-1px, 0);
+            opacity: 0.5;
+        }
+        3% {
+            transform: translate(1px, -1px);
+            opacity: 0.65;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .glitch::before,
+        .glitch::after {
+            animation: none;
+            opacity: 0;
+        }
+    }
+
     .prose-like {
         @apply max-w-[68ch] text-[1.0625rem] leading-[1.75];
     }

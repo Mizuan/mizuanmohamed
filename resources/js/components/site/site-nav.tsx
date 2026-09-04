@@ -1,10 +1,12 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Menu } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
-import { SectionLabel } from '@/components/site/section-label';
+import { GlitchText } from '@/components/site/glitch-text';
+import { SiteSearch, useSearchDialog } from '@/components/site/site-search';
 import { SocialIconLinks } from '@/components/site/social-links';
 import {
     Sheet,
+    SheetClose,
     SheetContent,
     SheetTitle,
     SheetTrigger,
@@ -28,6 +30,8 @@ export function SiteNav() {
     const settings = useSiteSettings();
     const items = useNavItems();
 
+    const { open: searchOpen, setOpen: setSearchOpen } = useSearchDialog();
+
     const isActive = (url: string) =>
         url === '/' ? currentUrl === '/' : currentUrl.startsWith(url);
 
@@ -36,34 +40,52 @@ export function SiteNav() {
 
     return (
         <header>
+            {settings.tagline && (
+                <div className="border-b border-border bg-muted">
+                    <div className="mx-auto max-w-7xl px-6 py-1 lg:px-8">
+                        <GlitchText
+                            text={settings.tagline}
+                            className="text-xs text-muted-foreground"
+                        />
+                    </div>
+                </div>
+            )}
+
             {/* Masthead: the brand carries the identity so the body can lead with content. */}
             <div className="sticky top-0 z-40 border-b border-border bg-background sm:relative sm:border-b-0">
                 <MastheadField />
 
                 <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 sm:py-6 lg:px-8">
-                    <div>
-                        {settings.tagline && (
-                            <SectionLabel className="mb-1.5 hidden text-xs sm:flex">
-                                {settings.tagline}
-                            </SectionLabel>
-                        )}
-                        <Link
-                            href={home()}
-                            className="font-display text-2xl font-bold tracking-tight transition-colors hover:text-brand sm:text-3xl"
-                        >
-                            {settings.brand_name}
-                        </Link>
-                    </div>
+                    <Link
+                        href={home()}
+                        className="font-display text-2xl font-bold tracking-tight transition-colors hover:text-brand sm:text-4xl"
+                    >
+                        {settings.brand_name}
+                    </Link>
 
                     <SocialIconLinks className="hidden items-center gap-5 sm:flex" />
 
-                    <MobileMenu
-                        items={items}
-                        isActive={isActive}
-                        brandName={settings.brand_name}
-                    />
+                    <div className="flex items-center gap-1 sm:hidden">
+                        <button
+                            type="button"
+                            aria-label="Search"
+                            onClick={() => setSearchOpen(true)}
+                            className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand"
+                        >
+                            <Search className="size-5" />
+                        </button>
+
+                        <MobileMenu
+                            items={items}
+                            isActive={isActive}
+                            brandName={settings.brand_name}
+                            onSearch={() => setSearchOpen(true)}
+                        />
+                    </div>
                 </div>
             </div>
+
+            <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
 
             {/* Nav strip: sticky on its own once the masthead scrolls away. */}
             <div className="sticky top-0 z-40 hidden border-y border-border bg-background sm:block">
@@ -88,19 +110,30 @@ export function SiteNav() {
                         ))}
                     </div>
 
-                    {cta && (
-                        <Link
-                            href={cta.url}
-                            className={cn(
-                                'my-2 rounded-full px-4 py-1.5 font-medium transition-colors',
-                                isActive(cta.url)
-                                    ? 'bg-brand text-brand-foreground'
-                                    : 'border border-border bg-card hover:border-brand/40 hover:text-brand',
-                            )}
+                    <div className="flex items-center gap-4">
+                        <button
+                            type="button"
+                            onClick={() => setSearchOpen(true)}
+                            className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-brand"
                         >
-                            {cta.label}
-                        </Link>
-                    )}
+                            <Search className="size-4" />
+                            <span className="hidden text-xs lg:inline">⌘K</span>
+                        </button>
+
+                        {cta && (
+                            <Link
+                                href={cta.url}
+                                className={cn(
+                                    'my-2 rounded-full px-4 py-1.5 font-medium transition-colors',
+                                    isActive(cta.url)
+                                        ? 'bg-brand text-brand-foreground'
+                                        : 'border border-border bg-card hover:border-brand/40 hover:text-brand',
+                                )}
+                            >
+                                {cta.label}
+                            </Link>
+                        )}
+                    </div>
                 </nav>
             </div>
         </header>
@@ -111,10 +144,12 @@ function MobileMenu({
     items,
     isActive,
     brandName,
+    onSearch,
 }: {
     items: NavItem[];
     isActive: (url: string) => boolean;
     brandName: string;
+    onSearch: () => void;
 }) {
     const [open, setOpen] = useState(false);
 
@@ -124,7 +159,7 @@ function MobileMenu({
                 <button
                     type="button"
                     aria-label="Open menu"
-                    className="-mr-1.5 inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand sm:hidden"
+                    className="-mr-1.5 inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand"
                 >
                     <Menu className="size-5" />
                 </button>
@@ -132,13 +167,23 @@ function MobileMenu({
 
             <SheetContent
                 side="right"
-                className="w-4/5 max-w-xs gap-0 border-border bg-background p-0"
+                hideClose
+                className="flex h-full w-full max-w-none flex-col gap-0 border-0 bg-brand p-0 text-brand-foreground"
             >
-                <SheetTitle className="border-b border-border px-6 py-4 font-display text-base font-semibold tracking-[-0.01em]">
-                    {brandName}
-                </SheetTitle>
+                <div className="flex items-center justify-between px-6 py-4">
+                    <SheetTitle className="font-display text-base font-semibold tracking-[-0.01em] text-brand-foreground">
+                        {brandName}
+                    </SheetTitle>
 
-                <nav className="flex flex-col px-6 py-4">
+                    <SheetClose
+                        aria-label="Close menu"
+                        className="inline-flex size-9 items-center justify-center rounded-md transition-opacity hover:opacity-70"
+                    >
+                        <X className="size-5" />
+                    </SheetClose>
+                </div>
+
+                <nav className="flex flex-col px-6 pt-6">
                     {items.map((item) => {
                         const active = isActive(item.url);
 
@@ -149,14 +194,14 @@ function MobileMenu({
                                 onClick={() => setOpen(false)}
                                 aria-current={active ? 'page' : undefined}
                                 className={cn(
-                                    'flex items-center gap-2.5 border-b border-border py-4 font-display text-lg font-medium transition-colors last:border-b-0',
-                                    active ? 'text-brand' : 'hover:text-brand',
+                                    'flex items-center gap-3 py-4 font-display text-3xl font-semibold tracking-tight transition-opacity',
+                                    active ? 'opacity-100' : 'opacity-70',
                                 )}
                             >
                                 <span
                                     aria-hidden
                                     className={cn(
-                                        'text-brand transition-opacity',
+                                        'text-xl transition-opacity',
                                         active ? 'opacity-100' : 'opacity-0',
                                     )}
                                 >
@@ -168,7 +213,21 @@ function MobileMenu({
                     })}
                 </nav>
 
-                <SocialIconLinks className="mt-auto flex items-center gap-5 border-t border-border px-6 py-5" />
+                <button
+                    type="button"
+                    onClick={() => {
+                        setOpen(false);
+                        onSearch();
+                    }}
+                    className="mx-6 mt-8 flex items-center gap-3 rounded-full border border-brand-foreground/30 px-5 py-3 text-left text-sm transition-colors hover:bg-brand-foreground/10"
+                >
+                    <Search className="size-4" />
+                    Search the site
+                </button>
+
+                <div className="mt-auto flex items-center gap-5 px-6 py-8 text-brand-foreground/80">
+                    <SocialIconLinks className="flex items-center gap-5 [&_a]:text-brand-foreground/80 [&_a:hover]:text-brand-foreground" />
+                </div>
             </SheetContent>
         </Sheet>
     );
