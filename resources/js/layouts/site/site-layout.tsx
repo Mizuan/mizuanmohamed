@@ -7,7 +7,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         <div className="flex min-h-svh flex-col bg-background text-foreground antialiased">
             <SiteNav />
 
-            <main className="mx-auto w-full max-w-7xl flex-1 px-6 pt-12 pb-20 lg:px-8 lg:pt-16">
+            <main className="mx-auto w-full max-w-7xl flex-1 px-6 pt-10 pb-20 lg:px-8 lg:pt-12">
                 {children}
             </main>
 

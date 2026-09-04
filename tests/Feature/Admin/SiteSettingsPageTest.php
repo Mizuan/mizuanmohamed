@@ -24,33 +24,33 @@ it('saves settings and creates the singleton row', function (): void {
     livewire(SiteSettings::class)
         ->fillForm([
             ...SiteSetting::defaults(),
-            'hero_heading' => 'A New Heading',
+            'tagline' => 'A New Tagline',
             'footer_text' => 'Somewhere else',
         ])
         ->call('save')
         ->assertHasNoFormErrors();
 
     expect(SiteSetting::query()->count())->toBe(1);
-    expect(SiteSetting::current()->hero_heading)->toBe('A New Heading');
+    expect(SiteSetting::current()->tagline)->toBe('A New Tagline');
 });
 
 it('updates the existing row rather than creating another', function (): void {
     SiteSetting::create(SiteSetting::defaults());
 
     livewire(SiteSettings::class)
-        ->fillForm([...SiteSetting::defaults(), 'hero_heading' => 'Changed'])
+        ->fillForm([...SiteSetting::defaults(), 'tagline' => 'Changed'])
         ->call('save')
         ->assertHasNoFormErrors();
 
     expect(SiteSetting::query()->count())->toBe(1);
-    expect(SiteSetting::current()->hero_heading)->toBe('Changed');
+    expect(SiteSetting::current()->tagline)->toBe('Changed');
 });
 
-it('requires a heading', function (): void {
+it('requires a brand name', function (): void {
     livewire(SiteSettings::class)
-        ->fillForm(['hero_heading' => null])
+        ->fillForm(['brand_name' => null])
         ->call('save')
-        ->assertHasFormErrors(['hero_heading' => 'required']);
+        ->assertHasFormErrors(['brand_name' => 'required']);
 });
 
 it('survives a cache store that serializes', function (): void {
@@ -58,33 +58,33 @@ it('survives a cache store that serializes', function (): void {
     config()->set('cache.default', 'database');
     SiteSetting::flushCache();
 
-    SiteSetting::create([...SiteSetting::defaults(), 'hero_heading' => 'Serialized']);
+    SiteSetting::create([...SiteSetting::defaults(), 'tagline' => 'Serialized']);
 
     // Warm the cache, then read it back through a fresh unserialize.
     SiteSetting::current();
 
     expect(SiteSetting::current())->toBeInstanceOf(SiteSetting::class);
-    expect(SiteSetting::current()->hero_heading)->toBe('Serialized');
+    expect(SiteSetting::current()->tagline)->toBe('Serialized');
 
     SiteSetting::flushCache();
 });
 
 it('busts the cache so the public site shows new copy', function (): void {
     // Warm the cache with the defaults first.
-    expect(SiteSetting::current()->hero_heading)
-        ->toBe(SiteSetting::defaults()['hero_heading']);
+    expect(SiteSetting::current()->tagline)
+        ->toBe(SiteSetting::defaults()['tagline']);
 
     livewire(SiteSettings::class)
-        ->fillForm([...SiteSetting::defaults(), 'hero_heading' => 'Fresh Copy'])
+        ->fillForm([...SiteSetting::defaults(), 'tagline' => 'Fresh Copy'])
         ->call('save');
 
-    expect(SiteSetting::current()->hero_heading)->toBe('Fresh Copy');
+    expect(SiteSetting::current()->tagline)->toBe('Fresh Copy');
 
     auth()->logout();
 
     get('/')
         ->assertOk()
         ->assertInertia(
-            fn ($page) => $page->where('site.settings.hero_heading', 'Fresh Copy'),
+            fn ($page) => $page->where('site.settings.tagline', 'Fresh Copy'),
         );
 });

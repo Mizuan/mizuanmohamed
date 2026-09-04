@@ -45,54 +45,29 @@ class SiteSettings extends Page
         return $schema
             ->statePath('data')
             ->components([
-                Section::make('Identity')
-                    ->description('Shown in the navigation bar and in search results.')
+                Section::make('Masthead')
+                    ->description('The banner at the top of every public page.')
                     ->schema([
                         TextInput::make('brand_name')
+                            ->label('Name')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->helperText('The large wordmark, and the title in search results.'),
 
+                        TextInput::make('tagline')
+                            ->maxLength(255)
+                            ->helperText('The small line above the name.'),
+                    ]),
+
+                Section::make('Search engines')
+                    ->schema([
                         Textarea::make('meta_description')
+                            ->label('Description')
                             ->required()
                             ->rows(2)
                             ->maxLength(255)
-                            ->helperText('Used as the default description for search engines.'),
+                            ->helperText('Used when a page has no description of its own.'),
                     ]),
-
-                Section::make('Hero')
-                    ->description('The opening block on the home page.')
-                    ->schema([
-                        TextInput::make('hero_eyebrow')
-                            ->label('Eyebrow')
-                            ->maxLength(255),
-
-                        TextInput::make('hero_heading')
-                            ->label('Heading')
-                            ->required()
-                            ->maxLength(255),
-
-                        Textarea::make('hero_intro')
-                            ->label('Intro')
-                            ->required()
-                            ->rows(4),
-
-                        TextInput::make('hero_primary_label')
-                            ->label('Primary button label')
-                            ->maxLength(255),
-
-                        TextInput::make('hero_primary_url')
-                            ->label('Primary button URL')
-                            ->maxLength(255),
-
-                        TextInput::make('hero_secondary_label')
-                            ->label('Secondary button label')
-                            ->maxLength(255),
-
-                        TextInput::make('hero_secondary_url')
-                            ->label('Secondary button URL')
-                            ->maxLength(255),
-                    ])
-                    ->columns(2),
 
                 Section::make('Contact')
                     ->description('The closing block on the home page.')
