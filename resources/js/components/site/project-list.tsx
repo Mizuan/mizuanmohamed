@@ -60,11 +60,11 @@ export function ProjectCards({ projects }: { projects: ProjectListItem[] }) {
                 >
                     <ProjectLink
                         project={project}
-                        className="group relative flex h-full flex-col items-center rounded-md bg-card p-7 text-center transition-colors hover:bg-accent"
+                        className="group relative flex h-full flex-col items-center rounded-md border border-border bg-background p-7 text-center transition-colors hover:bg-accent"
                     >
                         <CropMarks className="-inset-1.5 text-border opacity-0 transition-opacity group-hover:opacity-100" />
 
-                        <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-background font-display text-xl font-semibold text-brand">
+                        <span className="relative inline-flex size-14 items-center justify-center rounded-full bg-muted font-display text-xl font-semibold text-brand">
                             {project.title.charAt(0).toUpperCase()}
                         </span>
 

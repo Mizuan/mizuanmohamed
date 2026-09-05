@@ -11,7 +11,7 @@
              these; Inertia's <Head> augments/overrides them client-side. --}}
         <meta name="description" content="Full-stack developer based in Malé, Maldives. Selected work, writing, and notes on building for the web with Laravel, React, and TypeScript.">
         <meta name="author" content="Mizuan Mohamed">
-        <meta name="theme-color" content="{{ $isPublicSite ? '#faf7f2' : '#0a0506' }}">
+        <meta name="theme-color" content="{{ $isPublicSite ? '#ffffff' : '#0a0506' }}">
         <meta name="color-scheme" content="{{ $isPublicSite ? 'light' : 'dark light' }}">
         <meta property="og:site_name" content="{{ config('app.name', 'Mizuan Mohamed') }}">
         <meta property="og:type" content="website">
@@ -64,11 +64,10 @@
             </script>
         @endunless
 
-        {{-- Matches the first-paint background: warm paper on the public site,
-             neutral white on the admin surface --}}
+        {{-- Matches --background so the first paint has no flash --}}
         <style>
             html {
-                background-color: {{ $isPublicSite ? 'oklch(0.977 0.008 85)' : 'oklch(1 0 0)' }};
+                background-color: oklch(1 0 0);
             }
 
             html.dark {

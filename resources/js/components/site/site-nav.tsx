@@ -39,104 +39,109 @@ export function SiteNav() {
     const cta = items.find((item) => item.is_cta);
 
     return (
-        <header>
+        <>
             {settings.tagline && (
-                <div className="border-b border-border bg-muted">
+                <div className="bg-foreground">
                     <div className="mx-auto max-w-7xl px-6 py-1 lg:px-8">
                         <GlitchText
                             text={settings.tagline}
-                            className="text-xs text-muted-foreground"
+                            className="text-xs text-background/80"
                         />
                     </div>
                 </div>
             )}
 
-            {/* Masthead: the brand carries the identity so the body can lead with content. */}
-            <div className="sticky top-0 z-40 border-b border-border bg-background sm:relative sm:border-b-0">
-                <MastheadField />
+            {/* Sticky on the header itself: a sticky child would only stick within it. */}
+            <header className="sticky top-0 z-40">
+                {/* Masthead: the brand carries the identity so the body can lead with content. */}
+                <div className="relative border-b border-border bg-background sm:border-b-0">
+                    <MastheadField />
 
-                <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 sm:py-6 lg:px-8">
-                    <Link
-                        href={home()}
-                        className="font-display text-2xl font-bold tracking-tight transition-colors hover:text-brand sm:text-4xl"
-                    >
-                        {settings.brand_name}
-                    </Link>
-
-                    <SocialIconLinks className="hidden items-center gap-5 sm:flex" />
-
-                    <div className="flex items-center gap-1 sm:hidden">
-                        <button
-                            type="button"
-                            aria-label="Search"
-                            onClick={() => setSearchOpen(true)}
-                            className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand"
+                    <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 sm:py-6 lg:px-8">
+                        <Link
+                            href={home()}
+                            className="font-display text-2xl font-bold tracking-tight transition-colors hover:text-brand sm:text-4xl"
                         >
-                            <Search className="size-5" />
-                        </button>
+                            {settings.brand_name}
+                        </Link>
 
-                        <MobileMenu
-                            items={items}
-                            isActive={isActive}
-                            brandName={settings.brand_name}
-                            onSearch={() => setSearchOpen(true)}
-                        />
+                        <SocialIconLinks className="hidden items-center gap-5 sm:flex" />
+
+                        <div className="flex items-center gap-1 sm:hidden">
+                            <button
+                                type="button"
+                                aria-label="Search"
+                                onClick={() => setSearchOpen(true)}
+                                className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-brand"
+                            >
+                                <Search className="size-5" />
+                            </button>
+
+                            <MobileMenu
+                                items={items}
+                                isActive={isActive}
+                                brandName={settings.brand_name}
+                                onSearch={() => setSearchOpen(true)}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
+                {/* Nav strip */}
+                <div className="hidden border-y border-border bg-background sm:block">
+                    <nav className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 text-sm lg:px-8">
+                        <div className="flex items-center gap-7">
+                            {links.map((item) => (
+                                <Link
+                                    key={item.url}
+                                    href={item.url}
+                                    aria-current={
+                                        isActive(item.url) ? 'page' : undefined
+                                    }
+                                    className={cn(
+                                        '-mb-px border-b-2 py-2.5 font-medium transition-colors hover:text-brand',
+                                        isActive(item.url)
+                                            ? 'border-brand text-brand'
+                                            : 'border-transparent text-muted-foreground',
+                                    )}
+                                >
+                                    {item.label}
+                                </Link>
+                            ))}
+                        </div>
 
-            {/* Nav strip: sticky on its own once the masthead scrolls away. */}
-            <div className="sticky top-0 z-40 hidden border-y border-border bg-background sm:block">
-                <nav className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 text-sm lg:px-8">
-                    <div className="flex items-center gap-7">
-                        {links.map((item) => (
-                            <Link
-                                key={item.url}
-                                href={item.url}
-                                aria-current={
-                                    isActive(item.url) ? 'page' : undefined
-                                }
-                                className={cn(
-                                    '-mb-px border-b-2 py-3.5 font-medium transition-colors hover:text-brand',
-                                    isActive(item.url)
-                                        ? 'border-brand text-brand'
-                                        : 'border-transparent text-muted-foreground',
-                                )}
+                        <div className="flex items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setSearchOpen(true)}
+                                className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-brand"
                             >
-                                {item.label}
-                            </Link>
-                        ))}
-                    </div>
+                                <Search className="size-4" />
+                                <span className="hidden text-xs lg:inline">
+                                    ⌘K
+                                </span>
+                            </button>
 
-                    <div className="flex items-center gap-4">
-                        <button
-                            type="button"
-                            onClick={() => setSearchOpen(true)}
-                            className="inline-flex items-center gap-2 text-muted-foreground transition-colors hover:text-brand"
-                        >
-                            <Search className="size-4" />
-                            <span className="hidden text-xs lg:inline">⌘K</span>
-                        </button>
+                            {cta && (
+                                <Link
+                                    href={cta.url}
+                                    className={cn(
+                                        'my-1.5 rounded-full px-4 py-1.5 font-medium transition-colors',
+                                        isActive(cta.url)
+                                            ? 'bg-brand text-brand-foreground'
+                                            : 'border border-border bg-card hover:border-brand/40 hover:text-brand',
+                                    )}
+                                >
+                                    {cta.label}
+                                </Link>
+                            )}
+                        </div>
+                    </nav>
+                </div>
 
-                        {cta && (
-                            <Link
-                                href={cta.url}
-                                className={cn(
-                                    'my-2 rounded-full px-4 py-1.5 font-medium transition-colors',
-                                    isActive(cta.url)
-                                        ? 'bg-brand text-brand-foreground'
-                                        : 'border border-border bg-card hover:border-brand/40 hover:text-brand',
-                                )}
-                            >
-                                {cta.label}
-                            </Link>
-                        )}
-                    </div>
-                </nav>
-            </div>
-        </header>
+                <SiteSearch open={searchOpen} onOpenChange={setSearchOpen} />
+            </header>
+        </>
     );
 }
 
@@ -170,6 +175,7 @@ function MobileMenu({
                 hideClose
                 className="flex h-full w-full max-w-none flex-col gap-0 border-0 bg-background/70 p-0 text-foreground backdrop-blur-xl"
             >
+                {/* Mirrors the masthead so the header appears to stay put. */}
                 <div className="flex items-center justify-between px-6 py-4">
                     <SheetTitle className="font-display text-2xl font-bold tracking-tight">
                         {brandName}

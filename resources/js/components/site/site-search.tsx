@@ -130,7 +130,7 @@ export function SiteSearch({
 
                 <DialogPrimitive.Content
                     onKeyDown={onKeyDown}
-                    className="fixed inset-x-0 top-0 z-50 mx-auto flex max-h-[85svh] w-full max-w-2xl flex-col overflow-hidden border-b border-border bg-background shadow-lg data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top data-[state=open]:animate-in data-[state=open]:slide-in-from-top sm:top-20 sm:rounded-lg sm:border"
+                    className="fixed inset-x-4 top-4 z-50 flex max-h-[85svh] flex-col overflow-hidden rounded-lg border border-border bg-background shadow-lg data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top data-[state=open]:animate-in data-[state=open]:slide-in-from-top sm:inset-x-0 sm:top-20 sm:mx-auto sm:w-full sm:max-w-2xl"
                 >
                     <DialogPrimitive.Title className="sr-only">
                         Search
