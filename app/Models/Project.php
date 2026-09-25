@@ -17,6 +17,8 @@ use Illuminate\Support\Str;
     'technologies',
     'image',
     'link',
+    'year',
+    'role',
     'is_published',
     'sort_order',
 ])]
@@ -32,6 +34,7 @@ class Project extends Model
             'technologies' => 'array',
             'is_published' => 'boolean',
             'sort_order' => 'integer',
+            'year' => 'integer',
         ];
     }
 

@@ -12,6 +12,8 @@ export type ProjectListItem = {
     tags: string[] | null;
     technologies: string[] | null;
     link: string | null;
+    year?: number | null;
+    role?: string | null;
 };
 
 function stackOf(project: ProjectListItem): string[] {

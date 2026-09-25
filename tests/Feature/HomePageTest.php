@@ -35,3 +35,33 @@ it('limits latest articles to three and featured projects to four', function () 
                 ->has('featuredProjects', 4)
         );
 });
+
+it('shares content counts for the menu', function () {
+    Article::factory()->published()->count(2)->create();
+    Article::factory()->draft()->create();
+    Project::factory()->create(['is_published' => true, 'year' => 2023]);
+    Project::factory()->create(['is_published' => true, 'year' => 2025]);
+    Project::factory()->unpublished()->create(['year' => 2019]);
+
+    get('/')
+        ->assertOk()
+        ->assertInertia(
+            fn ($page) => $page
+                ->where('stats.articles', 2)
+                ->where('stats.projects', 2)
+                ->where('stats.firstProjectYear', 2023)
+                ->has('stats.latestArticleAt')
+        );
+});
+
+it('includes year and role on featured projects', function () {
+    Project::factory()->create(['is_published' => true, 'year' => 2025, 'role' => 'Lead']);
+
+    get('/')
+        ->assertOk()
+        ->assertInertia(
+            fn ($page) => $page
+                ->where('featuredProjects.0.year', 2025)
+                ->where('featuredProjects.0.role', 'Lead')
+        );
+});

@@ -76,6 +76,15 @@ class ProjectResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull(),
 
+                TextInput::make('year')
+                    ->numeric()
+                    ->minValue(2000)
+                    ->maxValue(2100),
+
+                TextInput::make('role')
+                    ->maxLength(100)
+                    ->placeholder('Lead, Full-stack…'),
+
                 FileUpload::make('image')
                     ->image()
                     ->maxSize(5120)
@@ -110,6 +119,9 @@ class ProjectResource extends Resource
 
                 TextColumn::make('title')
                     ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('year')
                     ->sortable(),
 
                 TextColumn::make('technologies')
