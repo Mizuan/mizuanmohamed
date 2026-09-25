@@ -33,7 +33,7 @@ const display = 'font-display font-bold tracking-[-0.055em]';
 const tight = 'leading-[0.86]';
 const label = 'font-display text-sm leading-tight font-semibold';
 const heading =
-    'text-[clamp(3rem,15vw,4.8rem)] sm:text-[clamp(2.6rem,7.4vw,6.2rem)]';
+    'text-[clamp(2.3rem,11.5vw,4rem)] sm:text-[clamp(2.6rem,7.4vw,6.2rem)]';
 
 export default function Home({
     latestArticles,
@@ -98,9 +98,9 @@ export default function Home({
                 <Hero brandName={settings.brand_name} />
 
                 <section className="mx-auto max-w-7xl px-4 py-24 sm:px-8 sm:py-36">
-                    <div className="grid sm:grid-cols-[minmax(150px,49%)_1fr]">
-                        <div className="hidden border-r border-foreground/25 sm:block" />
-                        <div className="sm:pl-6">
+                    <div className="grid grid-cols-[34%_1fr] sm:grid-cols-[minmax(150px,49%)_1fr]">
+                        <div className="border-r border-foreground/25" />
+                        <div className="pl-3.5 sm:pl-6">
                             <h2
                                 ref={introRef}
                                 className={cn(
@@ -149,9 +149,9 @@ export default function Home({
 
                 {latestArticles.length > 0 && (
                     <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-8 sm:pb-36">
-                        <div className="grid sm:grid-cols-[minmax(150px,22%)_1fr]">
-                            <div className="hidden border-r border-foreground/25 sm:block" />
-                            <div className="sm:pl-6">
+                        <div className="grid grid-cols-[14%_1fr] sm:grid-cols-[minmax(150px,22%)_1fr]">
+                            <div className="border-r border-foreground/25" />
+                            <div className="pl-3.5 sm:pl-6">
                                 <h2
                                     ref={writingRef}
                                     className={cn(
@@ -252,7 +252,7 @@ export default function Home({
                         <h2
                             ref={contactRef}
                             className={cn(
-                                'reveal sm:text-right',
+                                'reveal text-right',
                                 display,
                                 heading,
                                 tight,
@@ -356,7 +356,7 @@ function ProjectTable({ projects }: { projects: ProjectListItem[] }) {
             <div
                 aria-hidden
                 className={cn(
-                    'pointer-events-none fixed inset-0 z-20 bg-white/35 backdrop-blur-[6px] transition-opacity duration-300',
+                    'pointer-events-none fixed inset-0 z-20 hidden bg-white/35 backdrop-blur-[6px] transition-opacity duration-300 pointer-fine:block',
                     activeId ? 'opacity-100' : 'opacity-0',
                 )}
             />
