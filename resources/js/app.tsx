@@ -33,10 +33,12 @@ createInertiaApp({
     },
 });
 
-// The public site is light-only; only the admin follows the appearance setting.
-if (document.documentElement.hasAttribute('data-public-site')) {
-    document.documentElement.classList.remove('dark');
-    document.documentElement.style.colorScheme = 'light';
-} else {
-    initializeTheme();
+// Public site is light-only; skipped during SSR, where there is no document.
+if (typeof document !== 'undefined') {
+    if (document.documentElement.hasAttribute('data-public-site')) {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+    } else {
+        initializeTheme();
+    }
 }

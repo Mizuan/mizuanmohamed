@@ -34,6 +34,8 @@ it('creates a project with tags, technologies, and an optimised image', function
             'technologies' => ['Laravel', 'Inertia', 'React'],
             'image' => UploadedFile::fake()->image('cover.jpg'),
             'link' => 'https://treeandsalt.com',
+            'year' => 2025,
+            'role' => 'Lead',
             'is_published' => true,
         ])
         ->assertHasNoActionErrors();
@@ -43,6 +45,8 @@ it('creates a project with tags, technologies, and an optimised image', function
     expect($project->tags)->toBe(['Web Apps']);
     expect($project->technologies)->toBe(['Laravel', 'Inertia', 'React']);
     expect($project->link)->toBe('https://treeandsalt.com');
+    expect($project->year)->toBe(2025);
+    expect($project->role)->toBe('Lead');
 
     // The optimiser names files with a ULID, proving the upload was routed
     // through it rather than stored by Filament directly.
