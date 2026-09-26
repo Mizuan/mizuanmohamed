@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
-import type { PointerEvent as ReactPointerEvent } from 'react';
+import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
 import { formatArticleDate } from '@/components/site/article-list';
 import type { ArticleListItem } from '@/components/site/article-list';
 import type { ProjectListItem } from '@/components/site/project-list';
@@ -292,20 +292,34 @@ export default function Home({
     );
 }
 
+function riseDelay(seconds: number): CSSProperties {
+    return { '--tide-delay': `${seconds}s` } as CSSProperties;
+}
+
 function Hero({ brandName }: { brandName: string }) {
+    let letterIndex = 0;
+    const nameLines = brandName.split(' ').map((part) => ({
+        part,
+        letters: [...part].map((char) => ({ char, index: letterIndex++ })),
+    }));
+
     return (
         <section
             aria-label="Introduction"
             className="relative mx-auto grid min-h-svh max-w-7xl grid-cols-[34%_1fr] grid-rows-[1fr_auto] px-4 pt-5 sm:grid-cols-[minmax(150px,22%)_1fr] sm:px-8 sm:pt-7"
         >
-            <div className="flex flex-col justify-between border-r border-foreground/25 pr-3.5 pb-3 sm:pr-6">
+            <div className="relative flex flex-col justify-between pr-3.5 pb-3 sm:pr-6">
+                <span
+                    aria-hidden
+                    className="tide-rule absolute inset-y-0 right-0 w-px bg-foreground/25"
+                />
                 <div
                     aria-hidden
-                    className="grid size-[34px] place-items-center bg-brand font-display text-lg font-bold text-white"
+                    className="tide-box grid size-[34px] place-items-center bg-brand font-display text-lg font-bold text-white"
                 >
                     {brandName.charAt(0)}
                 </div>
-                <p className={label}>
+                <p className={cn(label, 'tide-fade')}>
                     Boring tech,
                     <br />
                     built well.
@@ -313,21 +327,30 @@ function Hero({ brandName }: { brandName: string }) {
             </div>
 
             <div className="flex flex-col justify-between pl-3.5 sm:pl-6">
-                <p className={cn(label, 'pr-20')}>
+                <p className={cn(label, 'tide-fade pr-20')}>
                     Based in Malé
                     <br />
                     Leading a team at a gov SOE
                 </p>
                 <h1
+                    aria-label={brandName}
                     className={cn(
                         display,
                         'pb-1.5 text-[clamp(2.2rem,11vw,3.6rem)] font-semibold sm:text-[clamp(2.5rem,7vw,6.4rem)]',
                         tight,
                     )}
                 >
-                    {brandName.split(' ').map((part) => (
-                        <span key={part} className="block">
-                            {part}
+                    {nameLines.map(({ part, letters }) => (
+                        <span key={part} aria-hidden className="tide-mask">
+                            {letters.map(({ char, index }) => (
+                                <span
+                                    key={index}
+                                    className="tide-rise"
+                                    style={riseDelay(0.36 + index * 0.032)}
+                                >
+                                    {char}
+                                </span>
+                            ))}
                         </span>
                     ))}
                 </h1>
@@ -340,9 +363,19 @@ function Hero({ brandName }: { brandName: string }) {
                     tight,
                 )}
             >
-                Full-stack
-                <br />
-                developer<span className="text-brand">.</span>
+                <span className="tide-mask">
+                    <span className="tide-rise" style={riseDelay(0.85)}>
+                        Full-stack
+                    </span>
+                </span>
+                <span className="block">
+                    <span className="tide-mask inline-block align-bottom">
+                        <span className="tide-rise" style={riseDelay(0.97)}>
+                            developer
+                        </span>
+                    </span>
+                    <span className="tide-drop align-bottom text-brand">.</span>
+                </span>
             </p>
         </section>
     );
